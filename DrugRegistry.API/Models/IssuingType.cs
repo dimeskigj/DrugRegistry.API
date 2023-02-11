@@ -2,7 +2,7 @@
 
 public enum IssuingType
 {
-    WithoutPrescrption,
+    OverTheCounter,
     PrescriptionOnly,
     HospitalOnly
 }
