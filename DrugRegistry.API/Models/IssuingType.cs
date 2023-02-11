@@ -1,9 +1,8 @@
-﻿namespace DrugRegistry.API.Models
+﻿namespace DrugRegistry.API.Models;
+
+public enum IssuingType
 {
-    public enum IssuingType
-    {
-        WithoutPrescrption,
-        PrescriptionOnly,
-        HospitalOnly
-    }
+    WithoutPrescrption,
+    PrescriptionOnly,
+    HospitalOnly
 }

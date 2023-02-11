@@ -4,9 +4,9 @@ namespace DrugRegistry.API.Models;
 
 public class Drug
 {
-    [Key]
+    [Key] public Guid Id { get; set; }
     public string DecisionNumber { get; set; }
-    public string ATC { get; set; }
+    public string Atc { get; set; }
     public string LatinName { get; set; }
     public string GenericName { get; set; }
     public IssuingType IssuingType { get; set; }
@@ -14,26 +14,28 @@ public class Drug
     public string Packaging { get; set; }
     public string Strength { get; set; }
     public string PharmaceuticalForm { get; set; }
-    public string URL { get; set; }
-    public string ManualURL { get; set; }
-    public string ReportURL { get; set; }
+    public string Url { get; set; }
+    public string ManualUrl { get; set; }
+    public string ReportUrl { get; set; }
     public DateTime DecisionDate { get; set; }
     public DateTime? ValidityDate { get; set; }
     public string ApprovalCarrier { get; set; }
     public string Manufacturer { get; set; }
-    public int PriceWithVAT { get; set; }
-    public int PriceWIthoutVAT { get; set; }
+    public int PriceWithVat { get; set; }
+    public int PriceWIthoutVat { get; set; }
     public DateTime LastUpdate { get; set; }
 
 
     public Drug(string decisionNumber, string atc, string latinName,
         string genericName, IssuingType issuingType, string ingredients,
         string packaging, string strength, string pharmaceuticalForm,
-        string url, string manualURL, string reportURL,
+        string url, string manualUrl, string reportUrl,
         DateTime decisionDate, string approvalCarrier,
-        string manufacturer, int priceWithVAT, int priceWIthoutVAT, DateTime lastUpdate = default, DateTime? validityDate = null) {
+        string manufacturer, int priceWithVat, int priceWithoutVat, DateTime lastUpdate = default,
+        DateTime? validityDate = null)
+    {
         DecisionNumber = decisionNumber;
-        ATC = atc;
+        Atc = atc;
         LatinName = latinName;
         GenericName = genericName;
         IssuingType = issuingType;
@@ -41,18 +43,17 @@ public class Drug
         Packaging = packaging;
         Strength = strength;
         PharmaceuticalForm = pharmaceuticalForm;
-        URL = url;
-        ManualURL = manualURL;
-        ReportURL = reportURL;
+        Url = url;
+        ManualUrl = manualUrl;
+        ReportUrl = reportUrl;
         ValidityDate = validityDate;
         DecisionDate = decisionDate;
         ApprovalCarrier = approvalCarrier;
         Manufacturer = manufacturer;
-        PriceWithVAT = priceWithVAT;
-        PriceWIthoutVAT = priceWIthoutVAT;
+        PriceWithVat = priceWithVat;
+        PriceWIthoutVat = priceWithoutVat;
         LastUpdate = lastUpdate == default
-                    ? DateTime.Now.Date
-                    : lastUpdate;
+            ? DateTime.Now.Date
+            : lastUpdate;
     }
 }
-
