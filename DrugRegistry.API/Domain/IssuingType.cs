@@ -1,4 +1,4 @@
-﻿namespace DrugRegistry.API.Models;
+﻿namespace DrugRegistry.API.Domain;
 
 public enum IssuingType
 {
