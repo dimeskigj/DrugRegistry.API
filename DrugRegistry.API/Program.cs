@@ -1,8 +1,5 @@
 using DrugRegistry.API.Database;
-using DrugRegistry.API.Domain;
-using DrugRegistry.API.Service;
-using DrugRegistry.API.Service.Interfaces;
-using Microsoft.AspNetCore.Mvc;
+using DrugRegistry.API.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +13,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContextFactory<AppDbContext>(
     options => options.UseNpgsql(dbConnectionString)
 );
-builder.Services.AddScoped<IDrugService, DrugService>();
+
+builder.Services.RegisterServices();
 
 var app = builder.Build();
 
@@ -29,20 +27,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapGet("/", () => "Hello World!");
-app.MapGet("/drugs", async ([FromServices] IDrugService drugService) => await drugService.GetAllDrugs())
-    .Produces<List<Drug>>()
-    .WithName("Get all drugs")
-    .WithTags("Drugs");
-app.MapGet("/test-add", async ([FromServices] IDrugService drugService) => await drugService.AddDrug(
-        new Drug
-        {
-            LatinName = "TestDrug" + Guid.NewGuid(),
-            DecisionDate = DateTime.Now.ToUniversalTime(),
-            LastUpdate = DateTime.Now.ToUniversalTime()
-        }))
-    .Produces<Guid>()
-    .WithName("Add a template drug")
-    .WithTags("Drugs");
+app.MapEndpoints();
 
 app.Run();
