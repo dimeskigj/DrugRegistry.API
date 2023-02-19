@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using NpgsqlTypes;
 
 namespace DrugRegistry.API.Domain;
 
@@ -22,7 +23,7 @@ public class Drug
     public string? ApprovalCarrier { get; set; }
     public string? Manufacturer { get; set; }
     public int PriceWithVat { get; set; }
-    public int PriceWIthoutVat { get; set; }
+    public int PriceWithoutVat { get; set; }
     public DateTime LastUpdate { get; set; }
 
 
@@ -51,7 +52,7 @@ public class Drug
         ApprovalCarrier = approvalCarrier;
         Manufacturer = manufacturer;
         PriceWithVat = priceWithVat;
-        PriceWIthoutVat = priceWithoutVat;
+        PriceWithoutVat = priceWithoutVat;
         LastUpdate = lastUpdate == default
             ? DateTime.Now.Date
             : lastUpdate;

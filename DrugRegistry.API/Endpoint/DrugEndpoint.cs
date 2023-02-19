@@ -17,11 +17,13 @@ public class DrugEndpoint : IEndpoint
     public WebApplication MapEndpoints(WebApplication app)
     {
         app.MapGet("/", () => "Hello World!");
-        app.MapGet("/drugs", async ([FromServices] IDrugService drugService) => await drugService.GetAllDrugs())
+
+        app.MapGet("/drugs", async (IDrugService drugService) => await drugService.GetAllDrugs())
             .Produces<List<Drug>>()
             .WithName("Get all drugs")
             .WithTags("Drugs");
-        app.MapGet("/test-add", async ([FromServices] IDrugService drugService) => await drugService.AddDrug(
+
+        app.MapGet("/test-add", async (IDrugService drugService) => await drugService.AddDrug(
                 new Drug
                 {
                     LatinName = "TestDrug" + Guid.NewGuid(),
@@ -31,6 +33,17 @@ public class DrugEndpoint : IEndpoint
             .Produces<Guid>()
             .WithName("Add a template drug")
             .WithTags("Drugs");
+
+        app.MapGet("/drugs/search", async (
+                    IDrugService drugService,
+                    [FromQuery] string query,
+                    [FromQuery] int? page,
+                    [FromQuery] int? size) =>
+                Results.Ok(await drugService.QueryDrugs(query, page ?? 0, size ?? 10)))
+            .Produces<PagedResult<Drug>>()
+            .WithName("Search drugs")
+            .WithTags("Drugs");
+
         return app;
     }
 }

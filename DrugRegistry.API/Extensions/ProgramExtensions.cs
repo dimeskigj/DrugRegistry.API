@@ -1,5 +1,4 @@
-﻿using DrugRegistry.API.Endpoint;
-using DrugRegistry.API.Endpoint.Interfaces;
+﻿using DrugRegistry.API.Endpoint.Interfaces;
 
 namespace DrugRegistry.API.Extensions;
 
