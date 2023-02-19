@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using NpgsqlTypes;
 
 namespace DrugRegistry.API.Domain;
 
@@ -25,40 +24,4 @@ public class Drug
     public int PriceWithVat { get; set; }
     public int PriceWithoutVat { get; set; }
     public DateTime LastUpdate { get; set; }
-
-
-    public Drug(string? decisionNumber, string? atc, string? latinName,
-        string? genericName, IssuingType issuingType, string? ingredients,
-        string? packaging, string? strength, string? pharmaceuticalForm,
-        string? url, string? manualUrl, string? reportUrl,
-        DateTime decisionDate, string? approvalCarrier,
-        string? manufacturer, int priceWithVat, int priceWithoutVat, DateTime lastUpdate = default,
-        DateTime? validityDate = null)
-    {
-        DecisionNumber = decisionNumber;
-        Atc = atc;
-        LatinName = latinName;
-        GenericName = genericName;
-        IssuingType = issuingType;
-        Ingredients = ingredients;
-        Packaging = packaging;
-        Strength = strength;
-        PharmaceuticalForm = pharmaceuticalForm;
-        Url = url;
-        ManualUrl = manualUrl;
-        ReportUrl = reportUrl;
-        ValidityDate = validityDate;
-        DecisionDate = decisionDate;
-        ApprovalCarrier = approvalCarrier;
-        Manufacturer = manufacturer;
-        PriceWithVat = priceWithVat;
-        PriceWithoutVat = priceWithoutVat;
-        LastUpdate = lastUpdate == default
-            ? DateTime.Now.Date
-            : lastUpdate;
-    }
-
-    public Drug()
-    {
-    }
 }

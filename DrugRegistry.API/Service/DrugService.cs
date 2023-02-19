@@ -18,7 +18,7 @@ public class DrugService : IDrugService
     }
 
     public async Task<List<Drug>> GetAllDrugs() => await _appDbContext.Drugs.ToListAsync();
-    public async Task<Drug?> GetDrugById(Guid id) => await Task.FromResult<Drug?>(null);
+    public async Task<Drug?> GetDrugById(Guid id) => await _appDbContext.Drugs.FirstOrDefaultAsync(d => d.Id == id);
 
     public async Task<Guid?> AddDrug(Drug drug)
     {
@@ -29,6 +29,7 @@ public class DrugService : IDrugService
 
     public async Task<PagedResult<Drug>> QueryDrugs(string query, int page, int size)
     {
+        // TODO: Refactor this to not load the entire DB on the server if performance's an issue
         var filtered = (await _appDbContext.Drugs.ToListAsync())
             .Select(d => new
             {
@@ -37,7 +38,9 @@ public class DrugService : IDrugService
                         new[]
                         {
                             d.GenericName ?? "",
-                            d.LatinName ?? ""
+                            d.LatinName ?? "",
+                            d.Atc ?? "",
+                            d.Ingredients ?? ""
                         },
                         s => s,
                         ScorerCache.Get<PartialRatioScorer>())
@@ -49,12 +52,11 @@ public class DrugService : IDrugService
             .ToList();
         
         var total = filtered.Count;
-        
+
         var results = filtered
             .Skip(page * size)
-            .Take(size)
-            .ToList();
-
+            .Take(size);
+        
         return new PagedResult<Drug>(results, total, page, size);
     }
 }

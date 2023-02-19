@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DrugRegistry.API.Endpoint;
 
+// ReSharper disable once UnusedType.Global
 public class DrugEndpoint : IEndpoint
 {
     public IServiceCollection RegisterServices(IServiceCollection collection)
@@ -16,8 +17,6 @@ public class DrugEndpoint : IEndpoint
 
     public WebApplication MapEndpoints(WebApplication app)
     {
-        app.MapGet("/", () => "Hello World!");
-
         app.MapGet("/drugs", async (IDrugService drugService) => await drugService.GetAllDrugs())
             .Produces<List<Drug>>()
             .WithName("Get all drugs")
@@ -36,10 +35,10 @@ public class DrugEndpoint : IEndpoint
 
         app.MapGet("/drugs/search", async (
                     IDrugService drugService,
-                    [FromQuery] string query,
+                    [FromQuery] string? query,
                     [FromQuery] int? page,
                     [FromQuery] int? size) =>
-                Results.Ok(await drugService.QueryDrugs(query, page ?? 0, size ?? 10)))
+                Results.Ok(await drugService.QueryDrugs(query ?? "", page ?? 0, size ?? 10)))
             .Produces<PagedResult<Drug>>()
             .WithName("Search drugs")
             .WithTags("Drugs");
