@@ -17,11 +17,11 @@ public class Drug
     public string? Url { get; set; }
     public string? ManualUrl { get; set; }
     public string? ReportUrl { get; set; }
-    public DateTime DecisionDate { get; set; }
+    public DateTime? DecisionDate { get; set; }
     public DateTime? ValidityDate { get; set; }
     public string? ApprovalCarrier { get; set; }
     public string? Manufacturer { get; set; }
-    public int PriceWithVat { get; set; }
-    public int PriceWithoutVat { get; set; }
+    public double PriceWithVat { get; set; }
+    public double PriceWithoutVat { get; set; }
     public DateTime LastUpdate { get; set; }
 }

@@ -34,7 +34,7 @@ namespace DrugRegistry.API.Migrations
                     b.Property<string>("Atc")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("DecisionDate")
+                    b.Property<DateTime?>("DecisionDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DecisionNumber")
@@ -67,11 +67,11 @@ namespace DrugRegistry.API.Migrations
                     b.Property<string>("PharmaceuticalForm")
                         .HasColumnType("text");
 
-                    b.Property<int>("PriceWithVat")
-                        .HasColumnType("integer");
+                    b.Property<double>("PriceWithVat")
+                        .HasColumnType("double precision");
 
-                    b.Property<int>("PriceWithoutVat")
-                        .HasColumnType("integer");
+                    b.Property<double>("PriceWithoutVat")
+                        .HasColumnType("double precision");
 
                     b.Property<string>("ReportUrl")
                         .HasColumnType("text");
