@@ -27,8 +27,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-new DrugScraper().GetPageCount();
-
 app.UseHttpsRedirection();
 
 app.MapEndpoints().Run();

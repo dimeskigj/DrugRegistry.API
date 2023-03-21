@@ -2,5 +2,5 @@
 
 public static class Constants
 {
-    public const string LekoviWebUrl = "https://lekovi.zdravstvo.gov.mk/";
+    public const string LekoviWebUrl = "https://lekovi.zdravstvo.gov.mk";
 }
