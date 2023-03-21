@@ -1,5 +1,5 @@
 using DrugRegistry.API.Database;
-using DrugRegistry.API.Extensions;
+using DrugRegistry.API.Extensions;using DrugRegistry.API.Scraping;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,6 +26,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+new DrugScraper().GetPageCount();
 
 app.UseHttpsRedirection();
 
