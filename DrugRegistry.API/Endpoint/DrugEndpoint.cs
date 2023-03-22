@@ -22,17 +22,6 @@ public class DrugEndpoint : IEndpoint
             .WithName("Get all drugs")
             .WithTags("Drugs");
 
-        app.MapGet("/test-add", async (IDrugService drugService) => await drugService.AddDrug(
-                new Drug
-                {
-                    LatinName = "TestDrug" + Guid.NewGuid(),
-                    DecisionDate = DateTime.Now.ToUniversalTime(),
-                    LastUpdate = DateTime.Now.ToUniversalTime()
-                }))
-            .Produces<Guid>()
-            .WithName("Add a template drug")
-            .WithTags("Drugs");
-
         app.MapGet("/drugs/search", async (
                     IDrugService drugService,
                     [FromQuery] string? query,
