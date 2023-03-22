@@ -12,4 +12,7 @@ public class BaseScraper
         doc.LoadHtml(html);
         return doc;
     }
+    
+    protected static string ExtractDeepText(HtmlNode node) =>
+        node.HasChildNodes ? ExtractDeepText(node.FirstChild) : node.InnerText.Trim();
 }

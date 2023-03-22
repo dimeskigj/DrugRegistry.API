@@ -28,7 +28,12 @@ public class DrugScraper : BaseScraper
             .Descendants("tbody")
             .First();
 
-        var results = tableBody.Descendants("tr").Select(row => ParseRow(row));
+        var results = tableBody
+            .Descendants("tr")
+            .Select(row => ParseRow(row))
+            .Select(d => ScrapDetails(d))
+            .Select(t => t.Result)
+            .ToList();
 
         return results;
     }
@@ -59,7 +64,7 @@ public class DrugScraper : BaseScraper
             ApprovalCarrier = approvalCarrier, DecisionNumber = solutionNumber,
             PriceWithVat = double.Parse(retailPrice),
             PriceWithoutVat = double.Parse(wholesalePrice),
-            Url = $"{Constants.LekoviWebUrl}{url}"
+            Url = $"{Constants.LekoviWebUrl}/{url}"
         };
 
         if (DateTime.TryParse(solutionDate, out var d1)) result.DecisionDate = d1;
@@ -69,8 +74,51 @@ public class DrugScraper : BaseScraper
         return result;
     }
 
-    private static string ExtractDeepText(HtmlNode node) =>
-        node.HasChildNodes ? ExtractDeepText(node.FirstChild) : node.InnerText.Trim();
+    private async Task<Drug> ScrapDetails(Drug drug)
+    {
+        var document = LoadHtmlDocument(await Client.RequestHtml(drug.Url!, HttpMethod.Post));
+        var atc = document.DocumentNode
+            .Descendants()
+            .Where(el => el.HasClass("row-fluid"))
+            .First(el => ExtractDeepText(el).Trim() == "АТЦ")
+            .Descendants()
+            .Select(ExtractDeepText)
+            .Last()
+            .Trim();
+        var ingredients = document.DocumentNode
+            .Descendants()
+            .Where(el => el.HasClass("row-fluid"))
+            .First(el => ExtractDeepText(el).Trim() == "Состав")
+            .Descendants()
+            .Select(ExtractDeepText)
+            .Last()
+            .Trim();
+        var manualUrl = document.DocumentNode
+            .Descendants()
+            .Where(el => el.HasClass("row-fluid"))
+            .First(el => ExtractDeepText(el).Trim() == "Упатство за употреба:")
+            .Descendants("div")
+            .Last()
+            .Descendants("a")
+            .First()
+            .GetAttributeValue("href", null);
+        var reportUrl = document.DocumentNode
+            .Descendants()
+            .Where(el => el.HasClass("row-fluid"))
+            .First(el => ExtractDeepText(el).Trim() == "Збирен извештај:")
+            .Descendants("div")
+            .Last()
+            .Descendants("a")
+            .First()
+            .GetAttributeValue("href", null);
+
+        drug.Atc = atc;
+        drug.Ingredients = ingredients;
+        if (manualUrl is not null) drug.ManualUrl = $"{Constants.LekoviWebUrl}/{manualUrl}";
+        if (reportUrl is not null) drug.ReportUrl = $"{Constants.LekoviWebUrl}/{reportUrl}";
+
+        return drug;
+    }
 
     private static IssuingType ParseIssuingType(string type) => type switch
     {
