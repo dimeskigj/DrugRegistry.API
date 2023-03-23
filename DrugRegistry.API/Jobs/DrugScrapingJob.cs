@@ -30,8 +30,10 @@ public class DrugScrapingJob : IJob
                 var pageResults = await _drugScraper.ScrapePage(currentPage);
                 foreach (var drug in pageResults)
                 {
-                    if (await _drugService.GetDrugByDecisionNumber(drug.DecisionNumber ?? string.Empty) is not null)
-                        continue;
+                    if (await _drugService.GetDrugByDecisionNumberAndAtc(
+                            drug.DecisionNumber ?? string.Empty,
+                            drug.Atc ?? string.Empty)
+                        is not null) continue;
                     await _drugService.AddDrug(drug);
                     counter++;
                 }

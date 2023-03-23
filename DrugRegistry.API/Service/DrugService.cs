@@ -20,8 +20,8 @@ public class DrugService : IDrugService
     public async Task<List<Drug>> GetAllDrugs() => await _appDbContext.Drugs.ToListAsync();
     public async Task<Drug?> GetDrugById(Guid id) => await _appDbContext.Drugs.FirstOrDefaultAsync(d => d.Id == id);
 
-    public async Task<Drug?> GetDrugByDecisionNumber(string decisionNumber) =>
-        await _appDbContext.Drugs.FirstOrDefaultAsync(d => d.DecisionNumber == decisionNumber);
+    public async Task<Drug?> GetDrugByDecisionNumberAndAtc(string decisionNumber, string atc) =>
+        await _appDbContext.Drugs.FirstOrDefaultAsync(d => d.DecisionNumber == decisionNumber && d.Atc == atc);
 
     public async Task<Guid?> AddDrug(Drug drug)
     {
