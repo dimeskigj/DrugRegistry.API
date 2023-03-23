@@ -1,11 +1,9 @@
-using DrugRegistry.API;
 using DrugRegistry.API.Database;
 using DrugRegistry.API.Extensions;
 using DrugRegistry.API.Jobs;
 using DrugRegistry.API.Scraping;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
-using Quartz.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 var dbConnectionString = builder.Configuration.GetConnectionString("db");
