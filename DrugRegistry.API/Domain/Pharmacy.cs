@@ -22,4 +22,5 @@ public class Pharmacy
     public bool? Central { get; set; }
     public bool? Active { get; set; }
     public Location? Location { get; set; }
+    public Uri? Url { get; set; }
 }

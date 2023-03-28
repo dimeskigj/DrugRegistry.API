@@ -20,7 +20,8 @@ builder.Services
     .AddHttpClient()
     .AddQuartz(q => q.UseMicrosoftDependencyInjectionJobFactory())
     .AddQuartzHostedService(opt => opt.WaitForJobsToComplete = false)
-    .AddScoped<DrugScraper>();
+    .AddScoped<DrugScraper>()
+    .AddScoped<PharmacyScraper>();
 
 var app = builder.Build();
 

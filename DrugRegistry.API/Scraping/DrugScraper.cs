@@ -13,16 +13,8 @@ public class DrugScraper : BaseScraper
         _logger = logger;
     }
 
-    public async Task<int> GetPageCount()
-    {
-        const string uri = $"{Constants.LekoviWebUrl}/drugsregister.grid.pager/1/grid_0?t:ac=overview";
-        var document = LoadHtmlDocument(await Client.RequestHtml(uri, HttpMethod.Post));
-        var count = document.DocumentNode
-            .Descendants("a")
-            .Where(el => el.Id.StartsWith("pager_") && int.TryParse(el.InnerText, out _))
-            .Select(el => int.Parse(el.InnerText)).MaxBy(number => number);
-        return count;
-    }
+    public Task<int> GetPageCount() =>
+        base.GetPageCount($"{Constants.LekoviWebUrl}/drugsregister.grid.pager/1/grid_0?t:ac=overview");
 
     public async Task<IEnumerable<Drug>> ScrapePage(int pageNumber = 1)
     {
@@ -37,8 +29,8 @@ public class DrugScraper : BaseScraper
 
         var results = tableBody
             .Descendants("tr")
-            .Select(row => ParseRow(row))
-            .Select(d => ScrapDetails(d))
+            .Select(ParseRow)
+            .Select(ScrapeDetails)
             .Select(t => t.Result)
             .ToList();
 
@@ -71,7 +63,7 @@ public class DrugScraper : BaseScraper
             ApprovalCarrier = approvalCarrier, DecisionNumber = solutionNumber,
             PriceWithVat = double.Parse(retailPrice),
             PriceWithoutVat = double.Parse(wholesalePrice),
-            Url = $"{Constants.LekoviWebUrl}/{url}"
+            Url = new Uri($"{Constants.LekoviWebUrl}/{url}")
         };
 
         if (DateTime.TryParse(solutionDate, out var d1)) result.DecisionDate = d1;
@@ -81,7 +73,7 @@ public class DrugScraper : BaseScraper
         return result;
     }
 
-    private async Task<Drug> ScrapDetails(Drug drug)
+    private async Task<Drug> ScrapeDetails(Drug drug)
     {
         try
         {
@@ -123,8 +115,8 @@ public class DrugScraper : BaseScraper
 
             drug.Atc = atc;
             drug.Ingredients = ingredients;
-            if (manualUrl is not null) drug.ManualUrl = $"{Constants.LekoviWebUrl}/{manualUrl}";
-            if (reportUrl is not null) drug.ReportUrl = $"{Constants.LekoviWebUrl}/{reportUrl}";
+            if (manualUrl is not null && Uri.TryCreate($"{Constants.LekoviWebUrl}/{manualUrl}", UriKind.Absolute, out var manualUri)) drug.ManualUrl = manualUri;
+            if (reportUrl is not null && Uri.TryCreate($"{Constants.LekoviWebUrl}/{reportUrl}", UriKind.Absolute, out var reportUri)) drug.ReportUrl = reportUri;
 
             return drug;
         }
