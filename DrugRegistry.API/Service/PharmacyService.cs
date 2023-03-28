@@ -42,4 +42,15 @@ public class PharmacyService : BaseService, IPharmacyService
 
         return new PagedResult<Pharmacy>(results, total, page, size);
     }
+
+    /// <summary>
+    /// Get the available municipalities ordered by their occurence rate.
+    /// </summary>
+    public async Task<IEnumerable<string>> GetMunicipalities() => 
+        (await AppDbContext.Pharmacies
+            .GroupBy(p => p.Municipality)
+            .OrderBy(g => g.Count())
+            .Select(g => g.Key)
+            .Where(m => m != null)
+            .Distinct().ToListAsync())!;
 }
