@@ -119,6 +119,7 @@ public class PharmacyScraper : BaseScraper
                 Central = central.Trim() == "Да",
                 Active = active.Trim() == "Да",
                 PharmacyType = PharmacyTypeExtensions.ParseType(type.Trim()),
+                LastUpdate = DateTime.UtcNow.Date
             };
 
             return await TryGetLocation(result);
