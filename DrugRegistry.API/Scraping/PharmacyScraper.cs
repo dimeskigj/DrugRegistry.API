@@ -37,11 +37,11 @@ public class PharmacyScraper : BaseScraper
 
             var detailUrls = nameTds.FilterNull()
                 .Select(td => td.Descendants("a").FirstOrDefault()?.GetAttributeValue("href", null))
-                .Select(url => $"{Constants.LekoviWebUrl}/{url}");
+                .Select(url => new Uri(new Uri(Constants.LekoviWebUrl), url));
 
             var pharmacies =
                 detailUrls.FilterNull()
-                    .Select(url => ScrapeDetails(new Uri(url)))
+                    .Select(ScrapeDetails)
                     .Select(t => t.Result)
                     .ToList();
 

@@ -20,6 +20,9 @@ public class DrugService : BaseService, IDrugService
     public async Task<Drug?> GetDrugByDecisionNumberAndAtc(string decisionNumber, string atc) =>
         await AppDbContext.Drugs.FirstOrDefaultAsync(d => d.DecisionNumber == decisionNumber && d.Atc == atc);
 
+    public async Task<Drug?> GetDrugByUrl(Uri uri) =>
+        await AppDbContext.Drugs.FirstOrDefaultAsync(d => d.Url == uri);
+
     public async Task<Guid?> AddDrug(Drug drug)
     {
         var res = await AppDbContext.AddAsync(drug);
