@@ -20,6 +20,9 @@ public class PharmacyDbService : BaseDbService, IPharmacyService
     public async Task<Pharmacy?> GetPharmacyByIdNumber(string idNumber) =>
         await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.IdNumber == idNumber);
 
+    public async Task<Pharmacy?> GetPharmacyByUrl(Uri uri) =>
+        await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.Url == uri);
+
 
     public async Task<Guid?> AddPharmacy(Pharmacy pharmacy)
     {
