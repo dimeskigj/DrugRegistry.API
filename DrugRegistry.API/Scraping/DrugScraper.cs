@@ -7,7 +7,6 @@ namespace DrugRegistry.API.Scraping;
 public class DrugScraper : BaseScraper
 {
     private readonly ILogger<DrugScraper> _logger;
-    private static readonly Uri LekoviWebUri = new(Constants.LekoviWebUrl);
 
     public DrugScraper(IHttpClientFactory httpClientFactory, ILogger<DrugScraper> logger) : base(httpClientFactory)
     {
@@ -64,7 +63,7 @@ public class DrugScraper : BaseScraper
             ApprovalCarrier = approvalCarrier, DecisionNumber = solutionNumber,
             PriceWithVat = double.Parse(retailPrice),
             PriceWithoutVat = double.Parse(wholesalePrice),
-            Url = new Uri(LekoviWebUri, url)
+            Url = new Uri(Constants.LekoviWebUrl, url)
         };
 
         if (DateTime.TryParse(solutionDate, out var d1)) result.DecisionDate = d1;
@@ -116,8 +115,8 @@ public class DrugScraper : BaseScraper
 
             drug.Atc = atc;
             drug.Ingredients = ingredients;
-            if (manualUrl is not null) drug.ManualUrl = new Uri(LekoviWebUri, manualUrl);
-            if (reportUrl is not null) drug.ReportUrl = new Uri(LekoviWebUri, reportUrl);
+            if (manualUrl is not null) drug.ManualUrl = new Uri(Constants.LekoviWebUrl, manualUrl);
+            if (reportUrl is not null) drug.ReportUrl = new Uri(Constants.LekoviWebUrl, reportUrl);
 
             return drug;
         }

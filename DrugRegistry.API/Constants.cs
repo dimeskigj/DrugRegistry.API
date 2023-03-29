@@ -2,7 +2,10 @@
 
 public static class Constants
 {
-    public const string LekoviWebUrl = "https://lekovi.zdravstvo.gov.mk";
+    private const string LekoviWeb = "https://lekovi.zdravstvo.gov.mk";
+    private const string NominatimGeocodingApi = "https://nominatim.openstreetmap.org";
+    public static readonly Uri LekoviWebUrl = new(LekoviWeb);
+    public static readonly Uri NominatimGeocodingApiUrl = new(NominatimGeocodingApi);
 
     public static class Quartz
     {
