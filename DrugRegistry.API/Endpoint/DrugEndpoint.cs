@@ -11,7 +11,7 @@ public class DrugEndpoint : IEndpoint
 {
     public IServiceCollection RegisterServices(IServiceCollection collection)
     {
-        collection.AddScoped<IDrugService, DrugService>();
+        collection.AddScoped<IDrugService, DrugDbService>();
         return collection;
     }
 

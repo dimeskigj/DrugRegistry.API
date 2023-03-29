@@ -2,11 +2,11 @@
 
 namespace DrugRegistry.API.Service;
 
-public class BaseService
+public class BaseDbService
 {
     protected readonly AppDbContext AppDbContext;
 
-    public BaseService(AppDbContext appDbContext)
+    protected BaseDbService(AppDbContext appDbContext)
     {
         AppDbContext = appDbContext;
     }

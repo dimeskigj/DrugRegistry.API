@@ -9,7 +9,7 @@ public class PharmacyEndpoint : IEndpoint
 {
     public IServiceCollection RegisterServices(IServiceCollection collection)
     {
-        collection.AddScoped<IPharmacyService, PharmacyService>();
+        collection.AddScoped<IPharmacyService, PharmacyDbService>();
         return collection;
     }
 

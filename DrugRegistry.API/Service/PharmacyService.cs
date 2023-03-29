@@ -6,9 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DrugRegistry.API.Service;
 
-public class PharmacyService : BaseService, IPharmacyService
+public class PharmacyDbService : BaseDbService, IPharmacyService
 {
-    public PharmacyService(AppDbContext appDbContext) : base(appDbContext)
+    public PharmacyDbService(AppDbContext appDbContext) : base(appDbContext)
     {
     }
 
