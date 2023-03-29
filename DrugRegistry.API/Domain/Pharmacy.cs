@@ -23,4 +23,5 @@ public class Pharmacy
     public bool? Active { get; set; }
     public Location? Location { get; set; }
     public Uri? Url { get; set; }
+    public DateTime LastUpdate { get; set; }
 }
