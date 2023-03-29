@@ -2,6 +2,8 @@ using DrugRegistry.API.Database;
 using DrugRegistry.API.Extensions;
 using DrugRegistry.API.Jobs;
 using DrugRegistry.API.Scraping;
+using DrugRegistry.API.Service;
+using DrugRegistry.API.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
 
@@ -20,6 +22,7 @@ builder.Services
     .AddHttpClient()
     .AddQuartz(q => q.UseMicrosoftDependencyInjectionJobFactory())
     .AddQuartzHostedService(opt => opt.WaitForJobsToComplete = false)
+    .AddScoped<IGeocodingService, GeocodingService>()
     .AddScoped<DrugScraper>()
     .AddScoped<PharmacyScraper>();
 
