@@ -2,14 +2,20 @@ using DrugRegistry.API.Database;
 using DrugRegistry.API.Extensions;
 using DrugRegistry.API.Jobs;
 using DrugRegistry.API.Scraping;
+using DrugRegistry.API.Service;
+using DrugRegistry.API.Service.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
-var dbConnectionString = builder.Configuration.GetConnectionString("db");
+
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+var dbConnectionString =
+    environment == Environments.Development
+        ? builder.Configuration.GetConnectionString("db")
+        : Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 // Add services to the container.
-
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
@@ -20,7 +26,9 @@ builder.Services
     .AddHttpClient()
     .AddQuartz(q => q.UseMicrosoftDependencyInjectionJobFactory())
     .AddQuartzHostedService(opt => opt.WaitForJobsToComplete = false)
-    .AddScoped<DrugScraper>();
+    .AddScoped<IGeocodingService, GeocodingService>()
+    .AddScoped<DrugScraper>()
+    .AddScoped<PharmacyScraper>();
 
 var app = builder.Build();
 

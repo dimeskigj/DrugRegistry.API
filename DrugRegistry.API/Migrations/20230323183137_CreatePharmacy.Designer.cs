@@ -3,6 +3,7 @@ using System;
 using DrugRegistry.API.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DrugRegistry.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class DrugsDbModelSnapshot : ModelSnapshot
+    [Migration("20230323183137_CreatePharmacy")]
+    partial class CreatePharmacy
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,9 +140,6 @@ namespace DrugRegistry.API.Migrations
                     b.Property<string>("IdNumber")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("LastUpdate")
-                        .HasColumnType("timestamp with time zone");
-
                     b.Property<Guid?>("LocationId")
                         .HasColumnType("uuid");
 
@@ -165,9 +165,6 @@ namespace DrugRegistry.API.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("Technicians")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Url")
                         .HasColumnType("text");
 
                     b.HasKey("Id");

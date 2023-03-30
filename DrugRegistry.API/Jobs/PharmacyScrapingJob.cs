@@ -4,34 +4,34 @@ using Quartz;
 
 namespace DrugRegistry.API.Jobs;
 
-public class DrugScrapingJob : IJob
+public class PharmacyScrapingJob : IJob
 {
     private const int MaxAttempts = 5;
-    private readonly IDrugService _drugService;
-    private readonly DrugScraper _drugScraper;
-    private readonly ILogger<DrugScrapingJob> _logger;
+    private readonly IPharmacyService _pharmacyService;
+    private readonly PharmacyScraper _pharmacyScraper;
+    private readonly ILogger<PharmacyScrapingJob> _logger;
 
-    public DrugScrapingJob(IDrugService drugService, DrugScraper drugScraper, ILogger<DrugScrapingJob> logger)
+    public PharmacyScrapingJob(IPharmacyService pharmacyService, PharmacyScraper pharmacyScraper, ILogger<PharmacyScrapingJob> logger)
     {
-        _drugService = drugService;
-        _drugScraper = drugScraper;
+        _pharmacyService = pharmacyService;
+        _pharmacyScraper = pharmacyScraper;
         _logger = logger;
     }
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var pageCount = await _drugScraper.GetPageCount();
+        var pageCount = await _pharmacyScraper.GetPageCount();
         var retryCount = 0;
         for (var currentPage = 1; currentPage <= pageCount; currentPage++)
         {
             try
             {
                 var counter = 0;
-                var pageResults = await _drugScraper.ScrapePage(currentPage);
-                foreach (var drug in pageResults.Where(d => d.Url is not null))
+                var pageResults = await _pharmacyScraper.ScrapePage(currentPage);
+                foreach (var pharmacy in pageResults.Where(p => p.Url is not null))
                 {
-                    if (await _drugService.GetDrugByUrl(drug.Url!) is not null) continue;
-                    await _drugService.AddDrug(drug);
+                    if (await _pharmacyService.GetPharmacyByUrl(pharmacy.Url!) is not null) continue;
+                    await _pharmacyService.AddPharmacy(pharmacy);
                     counter++;
                 }
 

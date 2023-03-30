@@ -14,9 +14,9 @@ public class Drug
     public string? Packaging { get; set; }
     public string? Strength { get; set; }
     public string? PharmaceuticalForm { get; set; }
-    public string? Url { get; set; }
-    public string? ManualUrl { get; set; }
-    public string? ReportUrl { get; set; }
+    public Uri? Url { get; set; }
+    public Uri? ManualUrl { get; set; }
+    public Uri? ReportUrl { get; set; }
     public DateTime? DecisionDate { get; set; }
     public DateTime? ValidityDate { get; set; }
     public string? ApprovalCarrier { get; set; }

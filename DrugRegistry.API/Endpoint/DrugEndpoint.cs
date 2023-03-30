@@ -11,17 +11,12 @@ public class DrugEndpoint : IEndpoint
 {
     public IServiceCollection RegisterServices(IServiceCollection collection)
     {
-        collection.AddScoped<IDrugService, DrugService>();
+        collection.AddScoped<IDrugService, DrugDbService>();
         return collection;
     }
 
     public WebApplication MapEndpoints(WebApplication app)
     {
-        app.MapGet("/drugs", async (IDrugService drugService) => await drugService.GetAllDrugs())
-            .Produces<List<Drug>>()
-            .WithName("Get all drugs")
-            .WithTags("Drugs");
-
         app.MapGet("/drugs/search", async (
                     IDrugService drugService,
                     [FromQuery] string? query,
