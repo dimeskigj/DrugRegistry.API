@@ -31,9 +31,13 @@ public class PharmacyDbService : BaseDbService, IPharmacyService
         return res.Entity.Id;
     }
 
-    public async Task<PagedResult<Pharmacy>> GetDrugsByDistance(Location location, int page, int size)
+    public async Task<PagedResult<Pharmacy>> GetDrugsByDistance(Location location, int page, int size,
+        string? municipality, string? place)
     {
-        var pharmacies = await GetAllPharmacies();
+        var pharmacies = await AppDbContext.Pharmacies
+            .Where(p => municipality == null || municipality == p.Municipality)
+            .Where(p => place == null || place == p.Place)
+            .ToListAsync();
         var results = pharmacies.OrderBy(p =>
                 p.Location is not null
                     ? GeoUtils.GetDistanceBetweenLocations(p.Location, location)
@@ -49,7 +53,7 @@ public class PharmacyDbService : BaseDbService, IPharmacyService
     /// <summary>
     /// Get the available municipalities ordered by their occurence rate.
     /// </summary>
-    public async Task<IEnumerable<string>> GetMunicipalities() => 
+    public async Task<IEnumerable<string>> GetMunicipalities() =>
         (await AppDbContext.Pharmacies
             .GroupBy(p => p.Municipality)
             .OrderBy(g => g.Count())

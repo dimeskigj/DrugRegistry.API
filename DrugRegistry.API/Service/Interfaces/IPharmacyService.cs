@@ -9,6 +9,9 @@ public interface IPharmacyService
     Task<Pharmacy?> GetPharmacyByIdNumber(string idNumber);
     Task<Pharmacy?> GetPharmacyByUrl(Uri uri);
     Task<Guid?> AddPharmacy(Pharmacy pharmacy);
-    Task<PagedResult<Pharmacy>> GetDrugsByDistance(Location location, int page, int size);
+
+    Task<PagedResult<Pharmacy>> GetDrugsByDistance(Location location, int page, int size, string? municipality,
+        string? place);
+
     Task<IEnumerable<string>> GetMunicipalities();
 }
