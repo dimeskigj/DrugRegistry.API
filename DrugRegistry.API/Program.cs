@@ -8,10 +8,14 @@ using Microsoft.EntityFrameworkCore;
 using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
-var dbConnectionString = builder.Configuration.GetConnectionString("db");
+
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+var dbConnectionString =
+    environment == Environments.Development
+        ? builder.Configuration.GetConnectionString("db")
+        : Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
 // Add services to the container.
-
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
