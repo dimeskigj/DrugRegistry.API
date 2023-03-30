@@ -3,6 +3,7 @@ using System;
 using DrugRegistry.API.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DrugRegistry.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class DrugsDbModelSnapshot : ModelSnapshot
+    [Migration("20230219211932_RenamePropertyInDrug")]
+    partial class RenamePropertyInDrug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -34,7 +37,7 @@ namespace DrugRegistry.API.Migrations
                     b.Property<string>("Atc")
                         .HasColumnType("text");
 
-                    b.Property<DateTime?>("DecisionDate")
+                    b.Property<DateTime>("DecisionDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DecisionNumber")
@@ -67,11 +70,11 @@ namespace DrugRegistry.API.Migrations
                     b.Property<string>("PharmaceuticalForm")
                         .HasColumnType("text");
 
-                    b.Property<double>("PriceWithVat")
-                        .HasColumnType("double precision");
+                    b.Property<int>("PriceWithVat")
+                        .HasColumnType("integer");
 
-                    b.Property<double>("PriceWithoutVat")
-                        .HasColumnType("double precision");
+                    b.Property<int>("PriceWithoutVat")
+                        .HasColumnType("integer");
 
                     b.Property<string>("ReportUrl")
                         .HasColumnType("text");
