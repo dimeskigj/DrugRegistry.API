@@ -17,11 +17,6 @@ public class DrugEndpoint : IEndpoint
 
     public WebApplication MapEndpoints(WebApplication app)
     {
-        app.MapGet("/drugs", async (IDrugService drugService) => await drugService.GetAllDrugs())
-            .Produces<List<Drug>>()
-            .WithName("Get all drugs")
-            .WithTags("Drugs");
-
         app.MapGet("/drugs/search", async (
                     IDrugService drugService,
                     [FromQuery] string? query,

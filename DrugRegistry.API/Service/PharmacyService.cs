@@ -31,7 +31,7 @@ public class PharmacyDbService : BaseDbService, IPharmacyService
         return res.Entity.Id;
     }
 
-    public async Task<PagedResult<Pharmacy>> GetDrugsByDistance(Location location, int page, int size,
+    public async Task<PagedResult<Pharmacy>> GetPharmaciesByDistance(Location location, int page, int size,
         string? municipality, string? place)
     {
         var pharmacies = await AppDbContext.Pharmacies
@@ -50,14 +50,20 @@ public class PharmacyDbService : BaseDbService, IPharmacyService
         return new PagedResult<Pharmacy>(results, total, page, size);
     }
 
-    /// <summary>
-    /// Get the available municipalities ordered by their occurence rate.
-    /// </summary>
-    public async Task<IEnumerable<string>> GetMunicipalities() =>
+    public async Task<IEnumerable<string>> GetMunicipalitiesOrderedByFrequency() =>
         (await AppDbContext.Pharmacies
             .GroupBy(p => p.Municipality)
-            .OrderBy(g => g.Count())
+            .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
             .Where(m => m != null)
-            .Distinct().ToListAsync())!;
+            .ToListAsync())!;
+
+    public async Task<IEnumerable<string>> GetPlacesOrderedByFrequencyForMunicipality(string municipality) =>
+        (await AppDbContext.Pharmacies
+            .Where(p => p.Municipality == municipality)
+            .GroupBy(p => p.Place)
+            .OrderByDescending(g => g.Count())
+            .Select(g => g.Key)
+            .Where(m => m != null)
+            .ToListAsync())!;
 }
