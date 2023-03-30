@@ -6,6 +6,7 @@ public interface IDrugService
 {
     Task<List<Drug>> GetAllDrugs();
     Task<Drug?> GetDrugById(Guid id);
+    Task<Drug?> GetDrugByDecisionNumberAndAtc(string decisionNumber, string atc);
     Task<Guid?> AddDrug(Drug drug);
     Task<PagedResult<Drug>> QueryDrugs(string query, int page, int size);
 }
