@@ -15,6 +15,8 @@ var dbConnectionString =
         ? builder.Configuration.GetConnectionString("db")
         : Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
 
+Console.WriteLine($"dbConnectionString = {dbConnectionString}");
+
 // Add services to the container.
 builder.Services
     .AddEndpointsApiExplorer()
