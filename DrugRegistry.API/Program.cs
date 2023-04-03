@@ -9,13 +9,7 @@ using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-var dbConnectionString =
-    environment == Environments.Development
-        ? builder.Configuration.GetConnectionString("db")
-        : Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-
-Console.WriteLine($"dbConnectionString = {dbConnectionString}");
+var dbConnectionString = builder.Configuration.GetConnectionString("db");
 
 // Add services to the container.
 builder.Services
