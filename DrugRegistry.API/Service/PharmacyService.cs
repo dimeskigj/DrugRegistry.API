@@ -35,6 +35,7 @@ public class PharmacyDbService : BaseDbService, IPharmacyService
         string? municipality, string? place)
     {
         var pharmacies = await AppDbContext.Pharmacies
+            .Include(p => p.Location)
             .Where(p => municipality == null || municipality == p.Municipality)
             .Where(p => place == null || place == p.Place)
             .ToListAsync();
