@@ -71,6 +71,7 @@ public class PharmacyService : BaseDbService, IPharmacyService
             .Where(p => municipality == null || municipality == p.Municipality)
             .Where(p => place == null || place == p.Place)
             .ToListAsync();
+        
         var results = pharmacies
             .Select(p => new
             {
@@ -82,16 +83,20 @@ public class PharmacyService : BaseDbService, IPharmacyService
                             p.Address ?? string.Empty
                         },
                         s => s,
-                        ScorerCache.Get<PartialRatioScorer>())
+                        ScorerCache.Get<TokenSetScorer>())
                     .Score
             })
             .Where(d => d.Score > 75)
             .OrderByDescending(d => d.Score)
             .Select(d => d.Pharmacy)
-            .Skip(page * size)
-            .Take(size);
+            .ToList();
 
-        var total = await AppDbContext.Pharmacies.CountAsync();
+        var total = results.Count;
+
+        results = results
+            .Skip(page * size)
+            .Take(size)
+            .ToList();
 
         return new PagedResult<Pharmacy>(results, total, page, size);
     }
