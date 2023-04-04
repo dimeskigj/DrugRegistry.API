@@ -1,9 +1,9 @@
 # DrugRegistry.API
 
-This Swagger document contains the API specification for DrugRegistry, which is a platform for querying information about drugs and pharmacies.
-Paths
+This document contains the API specification for DrugRegistry, which is a platform for querying information about drugs and pharmacies.
 
-## The following paths are available:
+## Paths
+The following paths are available:
 
 ### /api/drugs/search
 
