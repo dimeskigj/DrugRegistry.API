@@ -11,7 +11,8 @@ public static class PharmacyTypeExtensions
     private const string MobilePharmacy = "ПОДВИЖНА АПТЕКА";
 
     public static PharmacyType ParseType(string input)
-        => input switch
+    {
+        return input switch
         {
             PharmacyStation => PharmacyType.PharmacyStation,
             Hospital => PharmacyType.Hospital,
@@ -20,4 +21,5 @@ public static class PharmacyTypeExtensions
             MobilePharmacy => PharmacyType.MobilePharmacy,
             _ => throw new Exception()
         };
+    }
 }

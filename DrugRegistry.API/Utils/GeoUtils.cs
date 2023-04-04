@@ -4,6 +4,16 @@ namespace DrugRegistry.API.Utils;
 
 public static class GeoUtils
 {
+    /// <summary>
+    ///     Calculates the distance in meters between two locations on Earth.
+    /// </summary>
+    /// <param name="l1">The first location.</param>
+    /// <param name="l2">The second location.</param>
+    /// <returns>The distance in meters between the two locations.</returns>
+    /// <remarks>
+    ///     This method uses the Haversine formula to calculate the distance between two points
+    ///     on a sphere (in this case, the Earth) given their longitudes and latitudes.
+    /// </remarks>
     public static double GetDistanceBetweenLocations(Location l1, Location l2)
     {
         var (longitude, otherLongitude, latitude, otherLatitude) =

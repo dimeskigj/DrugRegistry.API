@@ -1,6 +1,6 @@
 ﻿using DrugRegistry.API.Domain;
 
-namespace DrugRegistry.API.Service.Interfaces;
+namespace DrugRegistry.API.Services.Interfaces;
 
 public interface IPharmacyService
 {
@@ -11,6 +11,9 @@ public interface IPharmacyService
     Task<Guid?> AddPharmacy(Pharmacy pharmacy);
 
     Task<PagedResult<Pharmacy>> GetPharmaciesByDistance(Location location, int page, int size, string? municipality,
+        string? place);
+
+    Task<PagedResult<Pharmacy>> GetPharmaciesByQuery(string query, int page, int size, string? municipality,
         string? place);
 
     Task<IEnumerable<string>> GetMunicipalitiesOrderedByFrequency();

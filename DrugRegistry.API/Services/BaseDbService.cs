@@ -1,6 +1,6 @@
 ﻿using DrugRegistry.API.Database;
 
-namespace DrugRegistry.API.Service;
+namespace DrugRegistry.API.Services;
 
 public class BaseDbService
 {

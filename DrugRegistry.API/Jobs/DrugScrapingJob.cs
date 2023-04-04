@@ -1,14 +1,15 @@
 ﻿using DrugRegistry.API.Scraping;
-using DrugRegistry.API.Service.Interfaces;
+using DrugRegistry.API.Services.Interfaces;
 using Quartz;
 
 namespace DrugRegistry.API.Jobs;
 
+// ReSharper disable once ClassNeverInstantiated.Global
 public class DrugScrapingJob : IJob
 {
     private const int MaxAttempts = 5;
-    private readonly IDrugService _drugService;
     private readonly DrugScraper _drugScraper;
+    private readonly IDrugService _drugService;
     private readonly ILogger<DrugScrapingJob> _logger;
 
     public DrugScrapingJob(IDrugService drugService, DrugScraper drugScraper, ILogger<DrugScrapingJob> logger)
@@ -23,7 +24,6 @@ public class DrugScrapingJob : IJob
         var pageCount = await _drugScraper.GetPageCount();
         var retryCount = 0;
         for (var currentPage = 1; currentPage <= pageCount; currentPage++)
-        {
             try
             {
                 var counter = 0;
@@ -52,6 +52,5 @@ public class DrugScrapingJob : IJob
                         currentPage, e.StackTrace);
                 }
             }
-        }
     }
 }
