@@ -33,6 +33,20 @@ public class PharmacyEndpoint : IEndpoint
             .WithName("Query pharmacies by location")
             .WithTags("Pharmacies");
 
+        app.MapGet("/pharmacies/byLocation", async (
+                    IPharmacyService pharmacyService,
+                    [FromQuery] string query,
+                    [FromQuery] int? page,
+                    [FromQuery] int? size,
+                    [FromQuery] string? municipality,
+                    [FromQuery] string? place) =>
+                Results.Ok(await pharmacyService.GetPharmaciesByQuery(query,
+                    page ?? 0, size ?? 10,
+                    municipality, place)))
+            .Produces<PagedResult<Drug>>()
+            .WithName("Query pharmacies by location")
+            .WithTags("Pharmacies");
+
         app.MapGet("/pharmacies/municipalitiesByFrequency", async (
                 IPharmacyService pharmacyService) => Results.Ok(
                 await pharmacyService.GetMunicipalitiesOrderedByFrequency()

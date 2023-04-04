@@ -2,6 +2,9 @@
 using DrugRegistry.API.Domain;
 using DrugRegistry.API.Service.Interfaces;
 using DrugRegistry.API.Utils;
+using FuzzySharp;
+using FuzzySharp.SimilarityRatio;
+using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
 using Microsoft.EntityFrameworkCore;
 
 namespace DrugRegistry.API.Service;
@@ -43,6 +46,39 @@ public class PharmacyDbService : BaseDbService, IPharmacyService
                 p.Location is not null
                     ? GeoUtils.GetDistanceBetweenLocations(p.Location, location)
                     : double.MaxValue)
+            .Skip(page * size)
+            .Take(size);
+
+        var total = await AppDbContext.Pharmacies.CountAsync();
+
+        return new PagedResult<Pharmacy>(results, total, page, size);
+    }
+
+    public async Task<PagedResult<Pharmacy>> GetPharmaciesByQuery(string query, int page, int size,
+        string? municipality, string? place)
+    {
+        var pharmacies = await AppDbContext.Pharmacies
+            .Include(p => p.Location)
+            .Where(p => municipality == null || municipality == p.Municipality)
+            .Where(p => place == null || place == p.Place)
+            .ToListAsync();
+        var results = pharmacies
+            .Select(p => new
+            {
+                Pharmacy = p,
+                Process.ExtractOne(query,
+                        new[]
+                        {
+                            p.Name ?? string.Empty,
+                            p.Address ?? string.Empty
+                        },
+                        s => s,
+                        ScorerCache.Get<PartialRatioScorer>())
+                    .Score
+            })
+            .Where(d => d.Score > 75)
+            .OrderByDescending(d => d.Score)
+            .Select(d => d.Pharmacy)
             .Skip(page * size)
             .Take(size);
 
