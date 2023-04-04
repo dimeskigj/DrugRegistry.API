@@ -1,6 +1,6 @@
 ﻿using DrugRegistry.API.Domain;
 
-namespace DrugRegistry.API.Service.Interfaces;
+namespace DrugRegistry.API.Services.Interfaces;
 
 public interface IDrugService
 {

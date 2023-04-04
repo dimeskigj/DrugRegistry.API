@@ -6,7 +6,7 @@ public static class Jobs
 {
     private const string EverySundayAt2300 = "0 0 23 ? * SUN *";
     private const string TheFirstWednesdayOfEveryMonth = "0 0 23 ? 1/1 WED#1 *";
-    
+
     private static readonly IJobDetail? DrugScrapingJobDetail = JobBuilder
         .Create<DrugScrapingJob>()
         .WithIdentity(Constants.Quartz.DrugScrapingJobName)
@@ -19,12 +19,12 @@ public static class Jobs
         .StartNow()
         .WithCronSchedule(EverySundayAt2300)
         .Build();
-    
+
     private static readonly IJobDetail? PharmacyScrapingJobDetail = JobBuilder
         .Create<PharmacyScrapingJob>()
         .WithIdentity(Constants.Quartz.PharmacyScrapingJobName)
         .Build();
-    
+
     private static readonly ITrigger? PharmacyScrapingTrigger = TriggerBuilder
         .Create()
         .ForJob(PharmacyScrapingJobDetail)

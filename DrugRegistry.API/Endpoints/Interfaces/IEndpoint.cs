@@ -1,4 +1,4 @@
-﻿namespace DrugRegistry.API.Endpoint.Interfaces;
+﻿namespace DrugRegistry.API.Endpoints.Interfaces;
 
 public interface IEndpoint
 {

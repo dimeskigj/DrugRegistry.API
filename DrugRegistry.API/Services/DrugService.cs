@@ -1,27 +1,38 @@
 ﻿using DrugRegistry.API.Database;
 using DrugRegistry.API.Domain;
-using DrugRegistry.API.Service.Interfaces;
+using DrugRegistry.API.Services.Interfaces;
 using FuzzySharp;
 using FuzzySharp.SimilarityRatio;
 using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
 using Microsoft.EntityFrameworkCore;
 
-namespace DrugRegistry.API.Service;
+namespace DrugRegistry.API.Services;
 
-public class DrugDbService : BaseDbService, IDrugService
+public class DrugService : BaseDbService, IDrugService
 {
-    public DrugDbService(AppDbContext appDbContext) : base(appDbContext)
+    public DrugService(AppDbContext appDbContext) : base(appDbContext)
     {
     }
 
-    public async Task<List<Drug>> GetAllDrugs() => await AppDbContext.Drugs.ToListAsync();
-    public async Task<Drug?> GetDrugById(Guid id) => await AppDbContext.Drugs.FirstOrDefaultAsync(d => d.Id == id);
+    public async Task<List<Drug>> GetAllDrugs()
+    {
+        return await AppDbContext.Drugs.ToListAsync();
+    }
 
-    public async Task<Drug?> GetDrugByDecisionNumberAndAtc(string decisionNumber, string atc) =>
-        await AppDbContext.Drugs.FirstOrDefaultAsync(d => d.DecisionNumber == decisionNumber && d.Atc == atc);
+    public async Task<Drug?> GetDrugById(Guid id)
+    {
+        return await AppDbContext.Drugs.FirstOrDefaultAsync(d => d.Id == id);
+    }
 
-    public async Task<Drug?> GetDrugByUrl(Uri uri) =>
-        await AppDbContext.Drugs.FirstOrDefaultAsync(d => d.Url == uri);
+    public async Task<Drug?> GetDrugByDecisionNumberAndAtc(string decisionNumber, string atc)
+    {
+        return await AppDbContext.Drugs.FirstOrDefaultAsync(d => d.DecisionNumber == decisionNumber && d.Atc == atc);
+    }
+
+    public async Task<Drug?> GetDrugByUrl(Uri uri)
+    {
+        return await AppDbContext.Drugs.FirstOrDefaultAsync(d => d.Url == uri);
+    }
 
     public async Task<Guid?> AddDrug(Drug drug)
     {

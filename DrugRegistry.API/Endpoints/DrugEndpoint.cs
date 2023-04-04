@@ -1,17 +1,17 @@
 ﻿using DrugRegistry.API.Domain;
-using DrugRegistry.API.Endpoint.Interfaces;
-using DrugRegistry.API.Service;
-using DrugRegistry.API.Service.Interfaces;
+using DrugRegistry.API.Endpoints.Interfaces;
+using DrugRegistry.API.Services;
+using DrugRegistry.API.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace DrugRegistry.API.Endpoint;
+namespace DrugRegistry.API.Endpoints;
 
 // ReSharper disable once UnusedType.Global
 public class DrugEndpoint : IEndpoint
 {
     public IServiceCollection RegisterServices(IServiceCollection collection)
     {
-        collection.AddScoped<IDrugService, DrugDbService>();
+        collection.AddScoped<IDrugService, DrugService>();
         return collection;
     }
 

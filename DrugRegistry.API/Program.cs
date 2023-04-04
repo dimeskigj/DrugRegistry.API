@@ -2,8 +2,8 @@ using DrugRegistry.API.Database;
 using DrugRegistry.API.Extensions;
 using DrugRegistry.API.Jobs;
 using DrugRegistry.API.Scraping;
-using DrugRegistry.API.Service;
-using DrugRegistry.API.Service.Interfaces;
+using DrugRegistry.API.Services;
+using DrugRegistry.API.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
 

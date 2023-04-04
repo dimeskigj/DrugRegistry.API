@@ -1,30 +1,39 @@
 ﻿using DrugRegistry.API.Database;
 using DrugRegistry.API.Domain;
-using DrugRegistry.API.Service.Interfaces;
+using DrugRegistry.API.Services.Interfaces;
 using DrugRegistry.API.Utils;
 using FuzzySharp;
 using FuzzySharp.SimilarityRatio;
 using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
 using Microsoft.EntityFrameworkCore;
 
-namespace DrugRegistry.API.Service;
+namespace DrugRegistry.API.Services;
 
-public class PharmacyDbService : BaseDbService, IPharmacyService
+public class PharmacyService : BaseDbService, IPharmacyService
 {
-    public PharmacyDbService(AppDbContext appDbContext) : base(appDbContext)
+    public PharmacyService(AppDbContext appDbContext) : base(appDbContext)
     {
     }
 
-    public async Task<List<Pharmacy>> GetAllPharmacies() => await AppDbContext.Pharmacies.ToListAsync();
+    public async Task<List<Pharmacy>> GetAllPharmacies()
+    {
+        return await AppDbContext.Pharmacies.ToListAsync();
+    }
 
-    public async Task<Pharmacy?> GetPharmacyById(Guid id) =>
-        await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.Id == id);
+    public async Task<Pharmacy?> GetPharmacyById(Guid id)
+    {
+        return await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.Id == id);
+    }
 
-    public async Task<Pharmacy?> GetPharmacyByIdNumber(string idNumber) =>
-        await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.IdNumber == idNumber);
+    public async Task<Pharmacy?> GetPharmacyByIdNumber(string idNumber)
+    {
+        return await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.IdNumber == idNumber);
+    }
 
-    public async Task<Pharmacy?> GetPharmacyByUrl(Uri uri) =>
-        await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.Url == uri);
+    public async Task<Pharmacy?> GetPharmacyByUrl(Uri uri)
+    {
+        return await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.Url == uri);
+    }
 
 
     public async Task<Guid?> AddPharmacy(Pharmacy pharmacy)
@@ -87,20 +96,24 @@ public class PharmacyDbService : BaseDbService, IPharmacyService
         return new PagedResult<Pharmacy>(results, total, page, size);
     }
 
-    public async Task<IEnumerable<string>> GetMunicipalitiesOrderedByFrequency() =>
-        (await AppDbContext.Pharmacies
+    public async Task<IEnumerable<string>> GetMunicipalitiesOrderedByFrequency()
+    {
+        return (await AppDbContext.Pharmacies
             .GroupBy(p => p.Municipality)
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
             .Where(m => m != null)
             .ToListAsync())!;
+    }
 
-    public async Task<IEnumerable<string>> GetPlacesOrderedByFrequencyForMunicipality(string municipality) =>
-        (await AppDbContext.Pharmacies
+    public async Task<IEnumerable<string>> GetPlacesOrderedByFrequencyForMunicipality(string municipality)
+    {
+        return (await AppDbContext.Pharmacies
             .Where(p => p.Municipality == municipality)
             .GroupBy(p => p.Place)
             .OrderByDescending(g => g.Count())
             .Select(g => g.Key)
             .Where(m => m != null)
             .ToListAsync())!;
+    }
 }

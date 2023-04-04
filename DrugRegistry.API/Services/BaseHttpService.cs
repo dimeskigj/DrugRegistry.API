@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace DrugRegistry.API.Service;
+namespace DrugRegistry.API.Services;
 
 public class BaseHttpService
 {

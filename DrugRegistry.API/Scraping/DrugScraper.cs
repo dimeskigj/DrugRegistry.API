@@ -13,8 +13,10 @@ public class DrugScraper : BaseScraper
         _logger = logger;
     }
 
-    public Task<int> GetPageCount() =>
-        base.GetPageCount($"{Constants.LekoviWebUrl}/drugsregister.grid.pager/1/grid_0?t:ac=overview");
+    public Task<int> GetPageCount()
+    {
+        return base.GetPageCount($"{Constants.LekoviWebUrl}/drugsregister.grid.pager/1/grid_0?t:ac=overview");
+    }
 
     public async Task<IEnumerable<Drug>> ScrapePage(int pageNumber = 1)
     {
@@ -127,10 +129,13 @@ public class DrugScraper : BaseScraper
         }
     }
 
-    private static IssuingType ParseIssuingType(string type) => type switch
+    private static IssuingType ParseIssuingType(string type)
     {
-        "Rp" => IssuingType.PrescriptionOnly,
-        "H" => IssuingType.HospitalOnly,
-        _ => IssuingType.OverTheCounter
-    };
+        return type switch
+        {
+            "Rp" => IssuingType.PrescriptionOnly,
+            "H" => IssuingType.HospitalOnly,
+            _ => IssuingType.OverTheCounter
+        };
+    }
 }

@@ -11,7 +11,7 @@ public abstract class BaseScraper
     {
         Client = httpClientFactory.CreateClient();
     }
-    
+
     protected async Task<int> GetPageCount(string url)
     {
         var document = LoadHtmlDocument(await Client.RequestHtml(url, HttpMethod.Post));

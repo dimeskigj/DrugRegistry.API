@@ -3,7 +3,9 @@
 public static class HttpClientExtensions
 {
     public static async Task<string> RequestHtml(this HttpClient client, string uri, HttpMethod method)
-        => await client.RequestHtml(new Uri(uri), method);
+    {
+        return await client.RequestHtml(new Uri(uri), method);
+    }
 
     public static async Task<string> RequestHtml(this HttpClient client, Uri uri, HttpMethod method)
     {

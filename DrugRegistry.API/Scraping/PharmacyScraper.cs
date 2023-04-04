@@ -1,15 +1,15 @@
 ﻿using DrugRegistry.API.Domain;
 using DrugRegistry.API.Domain.Scraping;
 using DrugRegistry.API.Extensions;
-using DrugRegistry.API.Service.Interfaces;
+using DrugRegistry.API.Services.Interfaces;
 using Newtonsoft.Json;
 
 namespace DrugRegistry.API.Scraping;
 
 public class PharmacyScraper : BaseScraper
 {
-    private readonly ILogger<PharmacyScraper> _logger;
     private readonly IGeocodingService _geocodingService;
+    private readonly ILogger<PharmacyScraper> _logger;
 
 
     public PharmacyScraper(IHttpClientFactory httpClientFactory, ILogger<PharmacyScraper> logger,
@@ -20,7 +20,10 @@ public class PharmacyScraper : BaseScraper
         _geocodingService = geocodingService;
     }
 
-    public Task<int> GetPageCount() => base.GetPageCount($"{Constants.LekoviWebUrl}/pharmacies");
+    public Task<int> GetPageCount()
+    {
+        return base.GetPageCount($"{Constants.LekoviWebUrl}/pharmacies");
+    }
 
     public async Task<IEnumerable<Pharmacy>> ScrapePage(int pageNumber = 1)
     {

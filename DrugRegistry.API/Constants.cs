@@ -3,7 +3,7 @@
 public static class Constants
 {
     public const string AppName = "DrugRegistry.API/0.1";
-    
+
     private const string LekoviWeb = "https://lekovi.zdravstvo.gov.mk";
     private const string NominatimGeocodingApi = "https://nominatim.openstreetmap.org";
     public static readonly Uri LekoviWebUrl = new(LekoviWeb);
