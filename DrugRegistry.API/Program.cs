@@ -11,7 +11,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var dbConnectionString = builder.Configuration.GetConnectionString("db");
 
-// Add services to the container.
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
