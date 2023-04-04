@@ -1,6 +1,7 @@
 ﻿using DrugRegistry.API.Database;
 using DrugRegistry.API.Domain;
 using DrugRegistry.API.Services.Interfaces;
+using DrugRegistry.API.Utils;
 using FuzzySharp;
 using FuzzySharp.SimilarityRatio;
 using FuzzySharp.SimilarityRatio.Scorer.StrategySensitive;
@@ -48,13 +49,13 @@ public class DrugService : BaseDbService, IDrugService
             .Select(d => new
             {
                 Drug = d,
-                Process.ExtractOne(query,
+                Process.ExtractOne(query.ToUpperLatin(),
                         new[]
                         {
-                            d.GenericName ?? "",
-                            d.LatinName ?? "",
-                            d.Atc ?? "",
-                            d.Ingredients ?? ""
+                            d.GenericName?.ToUpperLatin() ?? "",
+                            d.LatinName?.ToUpperLatin() ?? "",
+                            d.Atc?.ToUpperLatin() ?? "",
+                            d.Ingredients?.ToUpperLatin() ?? ""
                         },
                         s => s,
                         ScorerCache.Get<PartialRatioScorer>())

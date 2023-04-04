@@ -76,11 +76,11 @@ public class PharmacyService : BaseDbService, IPharmacyService
             .Select(p => new
             {
                 Pharmacy = p,
-                Process.ExtractOne(query,
+                Process.ExtractOne(query.ToUpperLatin(),
                         new[]
                         {
-                            p.Name ?? string.Empty,
-                            p.Address ?? string.Empty
+                            p.Name?.ToUpperLatin() ?? string.Empty,
+                            p.Address?.ToUpperLatin() ?? string.Empty
                         },
                         s => s,
                         ScorerCache.Get<TokenSetScorer>())

@@ -37,8 +37,13 @@ public static class StringUtils
         return string.Join(string.Empty, convertedList);
     }
 
+    /// <summary>
+    /// Converts a Macedonian Cyrillic string to its Latin representation and then returns the upper-cased version of the result.
+    /// </summary>
+    /// <param name="input">The input string to be converted.</param>
+    /// <returns>The upper-cased version of the Latin representation of the input string.</returns>
     public static string ToUpperLatin(this string input)
     {
-        return input.ToLatin().ToUpper();
+        return input.ToLatin().ToUpperInvariant();
     }
 }
