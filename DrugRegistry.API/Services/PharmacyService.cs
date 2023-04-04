@@ -71,7 +71,7 @@ public class PharmacyService : BaseDbService, IPharmacyService
             .Where(p => municipality == null || municipality == p.Municipality)
             .Where(p => place == null || place == p.Place)
             .ToListAsync();
-        
+
         var results = pharmacies
             .Select(p => new
             {
