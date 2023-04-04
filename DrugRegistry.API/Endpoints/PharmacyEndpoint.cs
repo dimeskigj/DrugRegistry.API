@@ -44,7 +44,7 @@ public class PharmacyEndpoint : IEndpoint
                     page ?? 0, size ?? 10,
                     municipality, place)))
             .Produces<PagedResult<Drug>>()
-            .WithName("Query pharmacies by location")
+            .WithName("Query pharmacies by name and address")
             .WithTags("Pharmacies");
 
         app.MapGet("/pharmacies/municipalitiesByFrequency", async (
