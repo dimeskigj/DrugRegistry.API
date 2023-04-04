@@ -17,7 +17,7 @@ public class PharmacyEndpoint : IEndpoint
 
     public WebApplication MapEndpoints(WebApplication app)
     {
-        app.MapGet("/pharmacies/byLocation", async (
+        app.MapGet("/api/pharmacies/byLocation", async (
                     IPharmacyService pharmacyService,
                     [FromQuery] double lon,
                     [FromQuery] double lat,
@@ -33,7 +33,7 @@ public class PharmacyEndpoint : IEndpoint
             .WithName("Query pharmacies by location")
             .WithTags("Pharmacies");
 
-        app.MapGet("/pharmacies/search", async (
+        app.MapGet("/api/pharmacies/search", async (
                     IPharmacyService pharmacyService,
                     [FromQuery] string query,
                     [FromQuery] int? page,
@@ -47,7 +47,7 @@ public class PharmacyEndpoint : IEndpoint
             .WithName("Query pharmacies by name and address")
             .WithTags("Pharmacies");
 
-        app.MapGet("/pharmacies/municipalitiesByFrequency", async (
+        app.MapGet("/api/pharmacies/municipalitiesByFrequency", async (
                 IPharmacyService pharmacyService) => Results.Ok(
                 await pharmacyService.GetMunicipalitiesOrderedByFrequency()
             ))
@@ -55,7 +55,7 @@ public class PharmacyEndpoint : IEndpoint
             .WithName("Query places by frequency")
             .WithTags("Pharmacies");
 
-        app.MapGet("/pharmacies/placesByFrequency", async (
+        app.MapGet("/api/pharmacies/placesByFrequency", async (
                     IPharmacyService pharmacyService,
                     [FromQuery] string municipality) =>
                 Results.Ok(

@@ -17,7 +17,7 @@ public class DrugEndpoint : IEndpoint
 
     public WebApplication MapEndpoints(WebApplication app)
     {
-        app.MapGet("/drugs/search", async (
+        app.MapGet("/api/drugs/search", async (
                     IDrugService drugService,
                     [FromQuery] string? query,
                     [FromQuery] int? page,
