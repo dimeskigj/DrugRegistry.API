@@ -19,10 +19,10 @@ public class DrugEndpoint : IEndpoint
     {
         app.MapGet("/api/drugs/search", async (
                     IDrugService drugService,
-                    [FromQuery] string? query,
+                    [FromQuery] string query,
                     [FromQuery] int? page,
                     [FromQuery] int? size) =>
-                Results.Ok(await drugService.QueryDrugs(query ?? "", page ?? 0, size ?? 10)))
+                Results.Ok(await drugService.QueryDrugs(query, page ?? 0, size ?? 10)))
             .Produces<PagedResult<Drug>>()
             .WithName("Search drugs")
             .WithTags("Drugs");
