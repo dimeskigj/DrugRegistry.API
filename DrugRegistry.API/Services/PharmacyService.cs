@@ -11,6 +11,8 @@ namespace DrugRegistry.API.Services;
 
 public class PharmacyService : BaseDbService, IPharmacyService
 {
+    private const int MaxItemsPerPage = 20;
+    
     public PharmacyService(AppDbContext appDbContext) : base(appDbContext)
     {
     }
@@ -46,6 +48,7 @@ public class PharmacyService : BaseDbService, IPharmacyService
     public async Task<PagedResult<Pharmacy>> GetPharmaciesByDistance(Location location, int page, int size,
         string? municipality, string? place)
     {
+        var minimalSize = size > MaxItemsPerPage ? MaxItemsPerPage : size;
         var pharmacies = await AppDbContext.Pharmacies
             .Include(p => p.Location)
             .Where(p => municipality == null || municipality == p.Municipality)
@@ -55,17 +58,18 @@ public class PharmacyService : BaseDbService, IPharmacyService
                 p.Location is not null
                     ? GeoUtils.GetDistanceBetweenLocations(p.Location, location)
                     : double.MaxValue)
-            .Skip(page * size)
-            .Take(size);
+            .Skip(page * minimalSize)
+            .Take(minimalSize);
 
         var total = await AppDbContext.Pharmacies.CountAsync();
 
-        return new PagedResult<Pharmacy>(results, total, page, size);
+        return new PagedResult<Pharmacy>(results, total, page, minimalSize);
     }
 
     public async Task<PagedResult<Pharmacy>> GetPharmaciesByQuery(string query, int page, int size,
         string? municipality, string? place)
     {
+        var minimalSize = size > MaxItemsPerPage ? MaxItemsPerPage : size;
         var pharmacies = await AppDbContext.Pharmacies
             .Include(p => p.Location)
             .Where(p => municipality == null || municipality == p.Municipality)
@@ -94,11 +98,11 @@ public class PharmacyService : BaseDbService, IPharmacyService
         var total = results.Count;
 
         results = results
-            .Skip(page * size)
-            .Take(size)
+            .Skip(page * minimalSize)
+            .Take(minimalSize)
             .ToList();
 
-        return new PagedResult<Pharmacy>(results, total, page, size);
+        return new PagedResult<Pharmacy>(results, total, page, minimalSize);
     }
 
     public async Task<IEnumerable<string>> GetMunicipalitiesOrderedByFrequency()

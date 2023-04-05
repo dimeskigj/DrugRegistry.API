@@ -11,6 +11,8 @@ namespace DrugRegistry.API.Services;
 
 public class DrugService : BaseDbService, IDrugService
 {
+    private const int MaxItemsPerPage = 20;
+
     public DrugService(AppDbContext appDbContext) : base(appDbContext)
     {
     }
@@ -45,6 +47,7 @@ public class DrugService : BaseDbService, IDrugService
     public async Task<PagedResult<Drug>> QueryDrugs(string query, int page, int size)
     {
         // TODO: Refactor this to not load the entire DB on the server if performance's an issue
+        var minimalSize = size > MaxItemsPerPage ? MaxItemsPerPage : size;
         var filtered = (await AppDbContext.Drugs.ToListAsync())
             .Select(d => new
             {
@@ -69,9 +72,9 @@ public class DrugService : BaseDbService, IDrugService
         var total = filtered.Count;
 
         var results = filtered
-            .Skip(page * size)
-            .Take(size);
+            .Skip(page * minimalSize)
+            .Take(minimalSize);
 
-        return new PagedResult<Drug>(results, total, page, size);
+        return new PagedResult<Drug>(results, total, page, minimalSize);
     }
 }
