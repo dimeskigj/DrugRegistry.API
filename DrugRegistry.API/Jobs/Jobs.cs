@@ -5,7 +5,7 @@ namespace DrugRegistry.API.Jobs;
 public static class Jobs
 {
     private const string EverySundayAt2300 = "0 0 23 ? * SUN *";
-    private const string TheFirstWednesdayOfEveryMonth = "0 0 23 ? 1/1 WED#1 *";
+    private const string EveryWednesdayAt2300 = "0 0 23 ? * WED *";
 
     private static readonly IJobDetail? DrugScrapingJobDetail = JobBuilder
         .Create<DrugScrapingJob>()
@@ -30,7 +30,7 @@ public static class Jobs
         .ForJob(PharmacyScrapingJobDetail)
         .WithIdentity(Constants.Quartz.PharmacyScrapingTriggerName)
         .StartNow()
-        .WithCronSchedule(TheFirstWednesdayOfEveryMonth)
+        .WithCronSchedule(EveryWednesdayAt2300)
         .Build();
 
     public static readonly Dictionary<IJobDetail, IReadOnlyCollection<ITrigger>> JobsDictionary =

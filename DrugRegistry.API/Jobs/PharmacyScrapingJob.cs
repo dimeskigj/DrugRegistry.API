@@ -29,9 +29,11 @@ public class PharmacyScrapingJob : IJob
             {
                 var counter = 0;
                 var pageResults = await _pharmacyScraper.ScrapePage(currentPage);
-                foreach (var pharmacy in pageResults.Where(p => p.Url is not null))
+                foreach (var pharmacy in pageResults.Where(p => p.Name is not null && p.Address is not null))
                 {
-                    if (await _pharmacyService.GetPharmacyByUrl(pharmacy.Url!) is not null) continue;
+                    var pharmacyWithSameNameAndAddress =
+                        await _pharmacyService.GetPharmacyByNameAndAddress(pharmacy.Name!, pharmacy.Address!);
+                    if (pharmacyWithSameNameAndAddress is not null) continue;
                     await _pharmacyService.AddPharmacy(pharmacy);
                     counter++;
                 }

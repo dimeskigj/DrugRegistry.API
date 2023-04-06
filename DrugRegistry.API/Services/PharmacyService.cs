@@ -37,6 +37,11 @@ public class PharmacyService : BaseDbService, IPharmacyService
         return await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.Url == uri);
     }
 
+    public async Task<Pharmacy?> GetPharmacyByNameAndAddress(string name, string address)
+    {
+        return await AppDbContext.Pharmacies.FirstOrDefaultAsync(p => p.Name == name && p.Address == address);
+    }
+
 
     public async Task<Guid?> AddPharmacy(Pharmacy pharmacy)
     {
