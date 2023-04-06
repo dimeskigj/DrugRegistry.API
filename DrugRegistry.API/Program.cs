@@ -9,7 +9,11 @@ using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
 
+#if DEBUG
 var dbConnectionString = builder.Configuration.GetConnectionString("db");
+#else
+var dbConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
+#endif
 
 builder.Services
     .AddEndpointsApiExplorer()
