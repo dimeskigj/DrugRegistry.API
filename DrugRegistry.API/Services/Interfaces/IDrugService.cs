@@ -10,4 +10,5 @@ public interface IDrugService
     Task<Drug?> GetDrugByUrl(Uri uri);
     Task<Guid?> AddDrug(Drug drug);
     Task<PagedResult<Drug>> QueryDrugs(string query, int page, int size);
+    Task<IEnumerable<Drug>> GetDrugsByIds(IEnumerable<Guid> ids);
 }

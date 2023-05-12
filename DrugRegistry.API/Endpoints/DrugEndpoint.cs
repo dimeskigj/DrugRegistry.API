@@ -27,6 +27,14 @@ public class DrugEndpoint : IEndpoint
             .WithName("Search drugs")
             .WithTags("Drugs");
 
+        app.MapPost("/api/drugs/by-ids", async (
+                    IDrugService drugService,
+                    [FromBody] IEnumerable<Guid> ids) =>
+                Results.Ok(await drugService.GetDrugsByIds(ids)))
+            .Produces<IEnumerable<Drug>>()
+            .WithName("Find drugs by ids")
+            .WithTags("Drugs");
+
         return app;
     }
 }

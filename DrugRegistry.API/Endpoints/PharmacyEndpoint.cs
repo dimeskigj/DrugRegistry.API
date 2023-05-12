@@ -17,7 +17,7 @@ public class PharmacyEndpoint : IEndpoint
 
     public WebApplication MapEndpoints(WebApplication app)
     {
-        app.MapGet("/api/pharmacies/byLocation", async (
+        app.MapGet("/api/pharmacies/by-location", async (
                     IPharmacyService pharmacyService,
                     [FromQuery] double lon,
                     [FromQuery] double lat,
@@ -29,7 +29,7 @@ public class PharmacyEndpoint : IEndpoint
                     new Location { Longitude = lon, Latitude = lat },
                     page ?? 0, size ?? 10,
                     municipality, place)))
-            .Produces<PagedResult<Drug>>()
+            .Produces<PagedResult<Pharmacy>>()
             .WithName("Query pharmacies by location")
             .WithTags("Pharmacies");
 
@@ -43,26 +43,34 @@ public class PharmacyEndpoint : IEndpoint
                 Results.Ok(await pharmacyService.GetPharmaciesByQuery(query,
                     page ?? 0, size ?? 10,
                     municipality, place)))
-            .Produces<PagedResult<Drug>>()
+            .Produces<PagedResult<Pharmacy>>()
             .WithName("Query pharmacies by name and address")
             .WithTags("Pharmacies");
 
-        app.MapGet("/api/pharmacies/municipalitiesByFrequency", async (
+        app.MapGet("/api/pharmacies/municipalities-by-frequency", async (
                 IPharmacyService pharmacyService) => Results.Ok(
                 await pharmacyService.GetMunicipalitiesOrderedByFrequency()
             ))
-            .Produces<PagedResult<Drug>>()
+            .Produces<IEnumerable<string>>()
             .WithName("Query places by frequency")
             .WithTags("Pharmacies");
 
-        app.MapGet("/api/pharmacies/placesByFrequency", async (
+        app.MapGet("/api/pharmacies/places-by-frequency", async (
                     IPharmacyService pharmacyService,
                     [FromQuery] string municipality) =>
                 Results.Ok(
                     await pharmacyService.GetPlacesOrderedByFrequencyForMunicipality(municipality)
                 ))
-            .Produces<PagedResult<Drug>>()
+            .Produces<IEnumerable<string>>()
             .WithName("Query municipalities by frequency")
+            .WithTags("Pharmacies");
+
+        app.MapPost("/api/pharmacies/by-ids", async (
+                    IPharmacyService pharmacyService, 
+                    [FromBody] IEnumerable<Guid> ids) =>
+                    Results.Ok(await pharmacyService.GetPharmaciesByIds(ids)))
+            .Produces<IEnumerable<Pharmacy>>()
+            .WithName("Find pharmacies by ids")
             .WithTags("Pharmacies");
 
         return app;

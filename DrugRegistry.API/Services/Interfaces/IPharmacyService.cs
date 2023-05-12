@@ -19,4 +19,5 @@ public interface IPharmacyService
 
     Task<IEnumerable<string>> GetMunicipalitiesOrderedByFrequency();
     Task<IEnumerable<string>> GetPlacesOrderedByFrequencyForMunicipality(string municipality);
+    Task<IEnumerable<Pharmacy>> GetPharmaciesByIds(IEnumerable<Guid> ids);
 }

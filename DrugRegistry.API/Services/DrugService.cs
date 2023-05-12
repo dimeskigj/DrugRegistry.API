@@ -77,4 +77,9 @@ public class DrugService : BaseDbService, IDrugService
 
         return new PagedResult<Drug>(results, total, page, minimalSize);
     }
+
+    public async Task<IEnumerable<Drug>> GetDrugsByIds(IEnumerable<Guid> ids)
+    {
+        return await AppDbContext.Drugs.Where(d => ids.Contains(d.Id)).ToListAsync();
+    }
 }

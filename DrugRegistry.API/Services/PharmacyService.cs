@@ -12,7 +12,7 @@ namespace DrugRegistry.API.Services;
 public class PharmacyService : BaseDbService, IPharmacyService
 {
     private const int MaxItemsPerPage = 20;
-    
+
     public PharmacyService(AppDbContext appDbContext) : base(appDbContext)
     {
     }
@@ -129,5 +129,13 @@ public class PharmacyService : BaseDbService, IPharmacyService
             .Select(g => g.Key)
             .Where(m => m != null)
             .ToListAsync())!;
+    }
+
+    public async Task<IEnumerable<Pharmacy>> GetPharmaciesByIds(IEnumerable<Guid> ids)
+    {
+        return await AppDbContext.Pharmacies
+            .Where(p => ids.Contains(p.Id))
+            .Include(p => p.Location)
+            .ToListAsync();
     }
 }
