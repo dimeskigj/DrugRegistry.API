@@ -44,11 +44,30 @@ public class DrugService : BaseDbService, IDrugService
         return res.Entity.Id;
     }
 
-    public async Task<Guid> UpdateDrug(Drug drug)
+    public async Task<Guid> UpdateDrug(Drug drug, Guid id)
     {
-        var result = AppDbContext.Drugs.Update(drug);
+        var existingDrug = await GetDrugById(id);
+        if (existingDrug is null) throw new ArgumentException("Invalid drug id");
+        existingDrug.DecisionNumber = drug.DecisionNumber;
+        existingDrug.Atc = drug.Atc;
+        existingDrug.LatinName = drug.LatinName;
+        existingDrug.GenericName = drug.GenericName;
+        existingDrug.IssuingType = drug.IssuingType;
+        existingDrug.Ingredients = drug.Ingredients;
+        existingDrug.Packaging = drug.Strength;
+        existingDrug.PharmaceuticalForm = drug.PharmaceuticalForm;
+        existingDrug.Url = drug.Url;
+        existingDrug.ManualUrl = drug.ManualUrl;
+        existingDrug.ReportUrl = drug.ReportUrl;
+        existingDrug.DecisionDate = drug.DecisionDate;
+        existingDrug.ValidityDate = drug.ValidityDate;
+        existingDrug.ApprovalCarrier = drug.ApprovalCarrier;
+        existingDrug.Manufacturer = drug.Manufacturer;
+        existingDrug.PriceWithoutVat = drug.PriceWithoutVat;
+        existingDrug.PriceWithVat = drug.PriceWithVat;
+        existingDrug.LastUpdate = drug.LastUpdate;
         await AppDbContext.SaveChangesAsync();
-        return result.Entity.Id;
+        return existingDrug.Id;
     }
 
     public async Task<PagedResult<Drug>> QueryDrugs(string query, int page, int size)

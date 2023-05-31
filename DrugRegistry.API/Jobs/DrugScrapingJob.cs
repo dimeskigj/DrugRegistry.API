@@ -39,8 +39,7 @@ public class DrugScrapingJob : IJob
                     }
                     else
                     {
-                        drug.Id = existingDrug.Id;
-                        await _drugService.UpdateDrug(drug);
+                        await _drugService.UpdateDrug(drug, existingDrug.Id);
                         updateCounter++;
                     }
                 }

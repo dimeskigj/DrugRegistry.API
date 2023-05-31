@@ -41,8 +41,7 @@ public class PharmacyScrapingJob : IJob
                     }
                     else
                     {
-                        pharmacy.Id = pharmacyWithSameNameAndAddress.Id;
-                        await _pharmacyService.UpdatePharmacy(pharmacy);
+                        await _pharmacyService.UpdatePharmacy(pharmacy, pharmacyWithSameNameAndAddress.Id);
                         updateCounter++;
                     }
                 }

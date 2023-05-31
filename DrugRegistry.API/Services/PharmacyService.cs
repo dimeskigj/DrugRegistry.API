@@ -50,11 +50,31 @@ public class PharmacyService : BaseDbService, IPharmacyService
         return res.Entity.Id;
     }
 
-    public async Task<Guid> UpdatePharmacy(Pharmacy pharmacy)
+    public async Task<Guid> UpdatePharmacy(Pharmacy pharmacy, Guid id)
     {
-        var result = AppDbContext.Pharmacies.Update(pharmacy);
+        var existingPharmacy = await GetPharmacyById(id);
+        if (existingPharmacy is null) throw new ArgumentException("Invalid pharmacy id");
+        existingPharmacy.IdNumber = pharmacy.IdNumber;
+        existingPharmacy.TaxNumber = pharmacy.TaxNumber;
+        existingPharmacy.Code = pharmacy.Code;
+        existingPharmacy.Name = pharmacy.Name;
+        existingPharmacy.Address = pharmacy.Address;
+        existingPharmacy.Municipality = pharmacy.Municipality;
+        existingPharmacy.Place = pharmacy.Place;
+        existingPharmacy.PhoneNumber = pharmacy.PhoneNumber;
+        existingPharmacy.Decision = pharmacy.Decision;
+        existingPharmacy.Email = pharmacy.Email;
+        existingPharmacy.Location = pharmacy.Location;
+        existingPharmacy.Pharmacists = pharmacy.Pharmacists;
+        existingPharmacy.Technicians = pharmacy.Technicians;
+        existingPharmacy.Comment = pharmacy.Comment;
+        existingPharmacy.PharmacyType = pharmacy.PharmacyType;
+        existingPharmacy.Active = pharmacy.Active;
+        existingPharmacy.Central = pharmacy.Central;
+        existingPharmacy.Url = pharmacy.Url;
+        existingPharmacy.LastUpdate = pharmacy.LastUpdate;
         await AppDbContext.SaveChangesAsync();
-        return result.Entity.Id;
+        return existingPharmacy.Id;
     }
 
     public async Task<PagedResult<Pharmacy>> GetPharmaciesByDistance(Location location, int page, int size,
