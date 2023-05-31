@@ -26,17 +26,28 @@ public class DrugScrapingJob : IJob
         for (var currentPage = 1; currentPage <= pageCount; currentPage++)
             try
             {
-                var counter = 0;
+                var createCounter = 0;
+                var updateCounter = 0;
                 var pageResults = await _drugScraper.ScrapePage(currentPage);
                 foreach (var drug in pageResults.Where(d => d.Url is not null))
                 {
-                    if (await _drugService.GetDrugByUrl(drug.Url!) is not null) continue;
-                    await _drugService.AddDrug(drug);
-                    counter++;
+                    var existingDrug = await _drugService.GetDrugByUrl(drug.Url!);
+                    if (existingDrug is null)
+                    {
+                        await _drugService.AddDrug(drug);
+                        createCounter++;
+                    }
+                    else
+                    {
+                        drug.Id = existingDrug.Id;
+                        await _drugService.UpdateDrug(drug);
+                        updateCounter++;
+                    }
                 }
 
                 retryCount = 0;
-                Console.WriteLine($"Wrote {counter} entries from page {currentPage}");
+                Console.WriteLine($"Wrote {createCounter} drug entries from page {currentPage}");
+                Console.WriteLine($"Updated {updateCounter} drug entries from page {currentPage}");
             }
             catch (Exception e)
             {
@@ -48,7 +59,7 @@ public class DrugScrapingJob : IJob
                 }
                 else
                 {
-                    _logger.LogError("Couldn't scrape page #{currentPage} after multiple attempts.\n{StackTrace}",
+                    _logger.LogError("Couldn't scrape drug page #{currentPage} after multiple attempts.\n{StackTrace}",
                         currentPage, e.StackTrace);
                 }
             }
