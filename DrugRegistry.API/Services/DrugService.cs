@@ -37,11 +37,18 @@ public class DrugService : BaseDbService, IDrugService
         return await AppDbContext.Drugs.FirstOrDefaultAsync(d => d.Url == uri);
     }
 
-    public async Task<Guid?> AddDrug(Drug drug)
+    public async Task<Guid> AddDrug(Drug drug)
     {
         var res = await AppDbContext.AddAsync(drug);
         await AppDbContext.SaveChangesAsync();
         return res.Entity.Id;
+    }
+
+    public async Task<Guid> UpdateDrug(Drug drug)
+    {
+        var result = AppDbContext.Drugs.Update(drug);
+        await AppDbContext.SaveChangesAsync();
+        return result.Entity.Id;
     }
 
     public async Task<PagedResult<Drug>> QueryDrugs(string query, int page, int size)

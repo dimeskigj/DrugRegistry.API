@@ -43,11 +43,18 @@ public class PharmacyService : BaseDbService, IPharmacyService
     }
 
 
-    public async Task<Guid?> AddPharmacy(Pharmacy pharmacy)
+    public async Task<Guid> AddPharmacy(Pharmacy pharmacy)
     {
         var res = await AppDbContext.AddAsync(pharmacy);
         await AppDbContext.SaveChangesAsync();
         return res.Entity.Id;
+    }
+
+    public async Task<Guid> UpdatePharmacy(Pharmacy pharmacy)
+    {
+        var result = AppDbContext.Pharmacies.Update(pharmacy);
+        await AppDbContext.SaveChangesAsync();
+        return result.Entity.Id;
     }
 
     public async Task<PagedResult<Pharmacy>> GetPharmaciesByDistance(Location location, int page, int size,
