@@ -8,12 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Quartz;
 
 var builder = WebApplication.CreateBuilder(args);
-
-#if DEBUG
-var dbConnectionString = builder.Configuration.GetConnectionString("db");
-#else
-var dbConnectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING");
-#endif
+var dbConnectionString = builder.Configuration.GetConnectionString("Database");
 
 builder.Services
     .AddEndpointsApiExplorer()
@@ -33,10 +28,6 @@ var app = builder.Build();
 
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
 
-var schedulerFactory = app.Services.GetRequiredService<ISchedulerFactory>();
-var scheduler = await schedulerFactory.GetScheduler();
-await scheduler.ScheduleJobs(Jobs.JobsDictionary, true);
-
 // Configure the HTTP request pipeline.
 
 if (app.Environment.IsDevelopment())
@@ -44,5 +35,27 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+using (var serviceScope = app.Services.CreateScope())
+{
+    var services = serviceScope.ServiceProvider;
+
+    var schedulerFactory = services.GetRequiredService<ISchedulerFactory>();
+    var scheduler = await schedulerFactory.GetScheduler();
+    await scheduler.ScheduleJobs(Jobs.JobsDictionary, true);
+
+    var dbContext = services.GetRequiredService<AppDbContext>();
+
+    if (!dbContext.Drugs.Any())
+    {
+        await scheduler.TriggerJob(Jobs.DrugScrapingJobDetail.Key);
+    }
+
+    if (!dbContext.Pharmacies.Any())
+    {
+        await scheduler.TriggerJob(Jobs.PharmacyScrapingJobDetail.Key);
+    }
+}
+
 
 app.MapEndpoints().Run();
