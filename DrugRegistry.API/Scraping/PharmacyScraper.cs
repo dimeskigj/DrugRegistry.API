@@ -2,24 +2,17 @@
 using DrugRegistry.API.Domain.Scraping;
 using DrugRegistry.API.Extensions;
 using DrugRegistry.API.Services.Interfaces;
+using DrugRegistry.API.Utils;
 using Newtonsoft.Json;
 
 namespace DrugRegistry.API.Scraping;
 
-public class PharmacyScraper : BaseScraper
+public class PharmacyScraper(
+    IHttpClientFactory httpClientFactory,
+    ILogger<PharmacyScraper> logger,
+    IGeocodingService geocodingService)
+    : BaseScraper(httpClientFactory)
 {
-    private readonly IGeocodingService _geocodingService;
-    private readonly ILogger<PharmacyScraper> _logger;
-
-
-    public PharmacyScraper(IHttpClientFactory httpClientFactory, ILogger<PharmacyScraper> logger,
-        IGeocodingService geocodingService) : base(
-        httpClientFactory)
-    {
-        _logger = logger;
-        _geocodingService = geocodingService;
-    }
-
     public Task<int> GetPageCount()
     {
         return base.GetPageCount($"{Constants.LekoviWebUrl}/pharmacies");
@@ -56,7 +49,7 @@ public class PharmacyScraper : BaseScraper
         }
         catch (Exception e)
         {
-            _logger.LogError("Failed to scrape page {pageNumber}.\n{StackTrace}", pageNumber, e.StackTrace);
+            logger.LogError("Failed to scrape page {pageNumber}.\n{StackTrace}", pageNumber, e.StackTrace);
             throw;
         }
     }
@@ -78,29 +71,31 @@ public class PharmacyScraper : BaseScraper
             var tableRows = document.DocumentNode.Descendants("tr").ToList();
 
             var title = document.DocumentNode.Descendants("h3").First(d => d.HasClass("modal-title")).InnerText;
-            var address = tableRows.First(row => ExtractDeepText(row) == "Адреса").ChildNodes.Skip(1).First().InnerText;
-            var municipality = tableRows.First(row => ExtractDeepText(row) == "Општина").ChildNodes.Skip(1).First()
+            var address = tableRows.First(row => row.ExtractDeepText() == "Адреса").ChildNodes.Skip(1).First()
                 .InnerText;
-            var place = tableRows.First(row => ExtractDeepText(row) == "Населено место").ChildNodes.Skip(1).First()
+            var municipality = tableRows.First(row => row.ExtractDeepText() == "Општина").ChildNodes.Skip(1).First()
                 .InnerText;
-            var idNumber = tableRows.First(row => ExtractDeepText(row) == "Матичен број").ChildNodes.Skip(1).First()
+            var place = tableRows.First(row => row.ExtractDeepText() == "Населено место").ChildNodes.Skip(1).First()
                 .InnerText;
-            var taxNumber = tableRows.First(row => ExtractDeepText(row) == "Даночен број").ChildNodes.Skip(1).First()
+            var idNumber = tableRows.First(row => row.ExtractDeepText() == "Матичен број").ChildNodes.Skip(1).First()
                 .InnerText;
-            var code = tableRows.First(row => ExtractDeepText(row) == "Шифра").ChildNodes.Skip(1).First().InnerText;
-            var phone = tableRows.First(row => ExtractDeepText(row) == "Tелефон").ChildNodes.Skip(1).First().InnerText;
-            var decision = tableRows.First(row => ExtractDeepText(row) == "Решение").ChildNodes.Skip(1).First()
+            var taxNumber = tableRows.First(row => row.ExtractDeepText() == "Даночен број").ChildNodes.Skip(1).First()
                 .InnerText;
-            var email = tableRows.First(row => ExtractDeepText(row) == "E-mail").ChildNodes.Skip(1).First().InnerText;
-            var pharmacists = tableRows.First(row => ExtractDeepText(row) == "Фармацевти").ChildNodes.Skip(1).First()
+            var code = tableRows.First(row => row.ExtractDeepText() == "Шифра").ChildNodes.Skip(1).First().InnerText;
+            var phone = tableRows.First(row => row.ExtractDeepText() == "Tелефон").ChildNodes.Skip(1).First().InnerText;
+            var decision = tableRows.First(row => row.ExtractDeepText() == "Решение").ChildNodes.Skip(1).First()
                 .InnerText;
-            var technicians = tableRows.First(row => ExtractDeepText(row) == "Tехничари").ChildNodes.Skip(1).First()
+            var email = tableRows.First(row => row.ExtractDeepText() == "E-mail").ChildNodes.Skip(1).First().InnerText;
+            var pharmacists = tableRows.First(row => row.ExtractDeepText() == "Фармацевти").ChildNodes.Skip(1).First()
                 .InnerText;
-            var type = tableRows.First(row => ExtractDeepText(row) == "Тип").ChildNodes.Skip(1).First().InnerText;
-            var central = tableRows.First(row => ExtractDeepText(row) == "Централна").ChildNodes.Skip(1).First()
+            var technicians = tableRows.First(row => row.ExtractDeepText() == "Tехничари").ChildNodes.Skip(1).First()
                 .InnerText;
-            var active = tableRows.First(row => ExtractDeepText(row) == "Активен").ChildNodes.Skip(1).First().InnerText;
-            var comment = tableRows.First(row => ExtractDeepText(row) == "Коментар").ChildNodes.Skip(1).First()
+            var type = tableRows.First(row => row.ExtractDeepText() == "Тип").ChildNodes.Skip(1).First().InnerText;
+            var central = tableRows.First(row => row.ExtractDeepText() == "Централна").ChildNodes.Skip(1).First()
+                .InnerText;
+            var active = tableRows.First(row => row.ExtractDeepText() == "Активен").ChildNodes.Skip(1).First()
+                .InnerText;
+            var comment = tableRows.First(row => row.ExtractDeepText() == "Коментар").ChildNodes.Skip(1).First()
                 .InnerText;
 
             var result = new Pharmacy
@@ -129,7 +124,7 @@ public class PharmacyScraper : BaseScraper
         }
         catch (Exception e)
         {
-            _logger.LogError("Failed to scrape details for pharmacy with url: {url}.\n{StackTrace}", url, e.StackTrace);
+            logger.LogError("Failed to scrape details for pharmacy with url: {url}.\n{StackTrace}", url, e.StackTrace);
             throw;
         }
     }
@@ -137,10 +132,10 @@ public class PharmacyScraper : BaseScraper
     private async Task<Pharmacy> TryGetLocation(Pharmacy pharmacy)
     {
         var response =
-            await _geocodingService.GeocodePlace(pharmacy.Address is null
+            await geocodingService.GeocodePlace(pharmacy.Address is null
                 ? string.Empty
                 : $"{pharmacy.Address} Македонија") ??
-            await _geocodingService.GeocodePlace(pharmacy.Municipality is null
+            await geocodingService.GeocodePlace(pharmacy.Municipality is null
                 ? string.Empty
                 : $"{pharmacy.Municipality} Македонија", 1000);
 

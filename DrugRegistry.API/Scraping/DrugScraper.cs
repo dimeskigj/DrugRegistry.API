@@ -1,5 +1,6 @@
 ﻿using DrugRegistry.API.Domain;
 using DrugRegistry.API.Extensions;
+using DrugRegistry.API.Utils;
 using HtmlAgilityPack;
 
 namespace DrugRegistry.API.Scraping;
@@ -41,20 +42,20 @@ public class DrugScraper : BaseScraper
 
     private static Drug ParseRow(HtmlNode row)
     {
-        var latinName = ExtractDeepText(row.Descendants().First(el => el.HasClass("latinName")));
-        var genericName = ExtractDeepText(row.Descendants().First(el => el.HasClass("genericNameMultiple")));
-        var strength = ExtractDeepText(row.Descendants().First(el => el.HasClass("strength")));
-        var packaging = ExtractDeepText(row.Descendants().First(el => el.HasClass("drugPackage")));
-        var pharmaceuticalForm = ExtractDeepText(row.Descendants().First(el => el.HasClass("pharmacyForm")));
-        var issuance = ExtractDeepText(row.Descendants().First(el => el.HasClass("modeOfIssuance")));
+        var latinName = row.Descendants().First(el => el.HasClass("latinName")).ExtractDeepText();
+        var genericName = row.Descendants().First(el => el.HasClass("genericNameMultiple")).ExtractDeepText();
+        var strength = row.Descendants().First(el => el.HasClass("strength")).ExtractDeepText();
+        var packaging = row.Descendants().First(el => el.HasClass("drugPackage")).ExtractDeepText();
+        var pharmaceuticalForm = row.Descendants().First(el => el.HasClass("pharmacyForm")).ExtractDeepText();
+        var issuance = row.Descendants().First(el => el.HasClass("modeOfIssuance")).ExtractDeepText();
         var issuingType = ParseIssuingType(issuance);
-        var manufacturer = ExtractDeepText(row.Descendants().First(el => el.HasClass("manufacturersNames")));
-        var approvalCarrier = ExtractDeepText(row.Descendants().First(el => el.HasClass("approvalCarrier")));
-        var solutionNumber = ExtractDeepText(row.Descendants().First(el => el.HasClass("solutionNumber")));
-        var solutionDate = ExtractDeepText(row.Descendants().First(el => el.HasClass("solutionDate")));
-        var validityDate = ExtractDeepText(row.Descendants().First(el => el.HasClass("validityDate")));
-        var wholesalePrice = ExtractDeepText(row.Descendants().First(el => el.HasClass("wholesalePrice")));
-        var retailPrice = ExtractDeepText(row.Descendants().First(el => el.HasClass("retailPrice")));
+        var manufacturer = row.Descendants().First(el => el.HasClass("manufacturersNames")).ExtractDeepText();
+        var approvalCarrier = row.Descendants().First(el => el.HasClass("approvalCarrier")).ExtractDeepText();
+        var solutionNumber = row.Descendants().First(el => el.HasClass("solutionNumber")).ExtractDeepText();
+        var solutionDate = row.Descendants().First(el => el.HasClass("solutionDate")).ExtractDeepText();
+        var validityDate = row.Descendants().First(el => el.HasClass("validityDate")).ExtractDeepText();
+        var wholesalePrice = row.Descendants().First(el => el.HasClass("wholesalePrice")).ExtractDeepText();
+        var retailPrice = row.Descendants().First(el => el.HasClass("retailPrice")).ExtractDeepText();
         var url = row.Descendants().First(el => el.HasClass("latinName")).Descendants("a").First()
             .GetAttributeValue("href", string.Empty);
 
@@ -80,35 +81,39 @@ public class DrugScraper : BaseScraper
         try
         {
             var document = LoadHtmlDocument(await Client.RequestHtml(drug.Url!, HttpMethod.Post));
+            
             var atc = document.DocumentNode
                 .Descendants()?
                 .Where(el => el.HasClass("row-fluid"))
-                .FirstOrDefault(el => ExtractDeepText(el).Trim() == "АТЦ")?
+                .FirstOrDefault(el => el.ExtractDeepText().Trim() == "АТЦ")?
                 .Descendants()?
-                .Select(ExtractDeepText)?
+                .Select(el => el.ExtractDeepText())
                 .LastOrDefault()?
                 .Trim();
+            
             var ingredients = document.DocumentNode
                 .Descendants()?
                 .Where(el => el.HasClass("row-fluid"))
-                .FirstOrDefault(el => ExtractDeepText(el).Trim() == "Состав")?
+                .FirstOrDefault(el => el.ExtractDeepText().Trim() == "Состав")?
                 .Descendants()?
-                .Select(ExtractDeepText)
+                .Select(el => el.ExtractDeepText())
                 .LastOrDefault()?
                 .Trim();
+            
             var manualUrl = document.DocumentNode
                 .Descendants()?
                 .Where(el => el.HasClass("row-fluid"))
-                .FirstOrDefault(el => ExtractDeepText(el).Trim() == "Упатство за употреба:", null)?
+                .FirstOrDefault(el => el.ExtractDeepText().Trim() == "Упатство за употреба:", null)?
                 .Descendants("div")?
                 .LastOrDefault()?
                 .Descendants("a")?
                 .FirstOrDefault()?
                 .GetAttributeValue("href", null);
+            
             var reportUrl = document.DocumentNode
                 .Descendants()?
                 .Where(el => el.HasClass("row-fluid"))
-                .FirstOrDefault(el => ExtractDeepText(el).Trim() == "Збирен извештај:", null)?
+                .FirstOrDefault(el => el.ExtractDeepText().Trim() == "Збирен извештај:", null)?
                 .Descendants("div")?
                 .LastOrDefault()?
                 .Descendants("a")?

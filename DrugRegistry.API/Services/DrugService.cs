@@ -9,13 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DrugRegistry.API.Services;
 
-public class DrugService : BaseDbService, IDrugService
+public class DrugService(AppDbContext appDbContext) : BaseDbService(appDbContext), IDrugService
 {
     private const int MaxItemsPerPage = 20;
-
-    public DrugService(AppDbContext appDbContext) : base(appDbContext)
-    {
-    }
 
     public async Task<List<Drug>> GetAllDrugs()
     {
@@ -47,14 +43,17 @@ public class DrugService : BaseDbService, IDrugService
     public async Task<Guid> UpdateDrug(Drug drug, Guid id)
     {
         var existingDrug = await GetDrugById(id);
+
         if (existingDrug is null) throw new ArgumentException("Invalid drug id");
+
         existingDrug.DecisionNumber = drug.DecisionNumber;
         existingDrug.Atc = drug.Atc;
         existingDrug.LatinName = drug.LatinName;
         existingDrug.GenericName = drug.GenericName;
         existingDrug.IssuingType = drug.IssuingType;
         existingDrug.Ingredients = drug.Ingredients;
-        existingDrug.Packaging = drug.Strength;
+        existingDrug.Strength = drug.Strength;
+        existingDrug.Packaging = drug.Packaging;
         existingDrug.PharmaceuticalForm = drug.PharmaceuticalForm;
         existingDrug.Url = drug.Url;
         existingDrug.ManualUrl = drug.ManualUrl;
@@ -66,7 +65,9 @@ public class DrugService : BaseDbService, IDrugService
         existingDrug.PriceWithoutVat = drug.PriceWithoutVat;
         existingDrug.PriceWithVat = drug.PriceWithVat;
         existingDrug.LastUpdate = drug.LastUpdate;
+
         await AppDbContext.SaveChangesAsync();
+
         return existingDrug.Id;
     }
 
@@ -79,13 +80,12 @@ public class DrugService : BaseDbService, IDrugService
             {
                 Drug = d,
                 Process.ExtractOne(query.ToUpperLatin(),
-                        new[]
-                        {
+                        [
                             d.GenericName?.ToUpperLatin() ?? "",
                             d.LatinName?.ToUpperLatin() ?? "",
                             d.Atc?.ToUpperLatin() ?? "",
                             d.Ingredients?.ToUpperLatin() ?? ""
-                        },
+                        ],
                         s => s,
                         ScorerCache.Get<PartialRatioScorer>())
                     .Score
