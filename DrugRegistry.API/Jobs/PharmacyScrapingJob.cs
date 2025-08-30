@@ -5,43 +5,36 @@ using Quartz;
 namespace DrugRegistry.API.Jobs;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class PharmacyScrapingJob : IJob
+public class PharmacyScrapingJob(
+    IPharmacyService pharmacyService,
+    PharmacyScraper pharmacyScraper,
+    ILogger<PharmacyScrapingJob> logger)
+    : IJob
 {
     private const int MaxAttempts = 5;
-    private readonly ILogger<PharmacyScrapingJob> _logger;
-    private readonly PharmacyScraper _pharmacyScraper;
-    private readonly IPharmacyService _pharmacyService;
-
-    public PharmacyScrapingJob(IPharmacyService pharmacyService, PharmacyScraper pharmacyScraper,
-        ILogger<PharmacyScrapingJob> logger)
-    {
-        _pharmacyService = pharmacyService;
-        _pharmacyScraper = pharmacyScraper;
-        _logger = logger;
-    }
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var pageCount = await _pharmacyScraper.GetPageCount();
+        var pageCount = await pharmacyScraper.GetPageCount();
         var retryCount = 0;
         for (var currentPage = 1; currentPage <= pageCount; currentPage++)
             try
             {
                 var createCounter = 0;
                 var updateCounter = 0;
-                var pageResults = await _pharmacyScraper.ScrapePage(currentPage);
+                var pageResults = await pharmacyScraper.ScrapePage(currentPage);
                 foreach (var pharmacy in pageResults.Where(p => p.Name is not null && p.Address is not null))
                 {
                     var pharmacyWithSameNameAndAddress =
-                        await _pharmacyService.GetPharmacyByNameAndAddress(pharmacy.Name!, pharmacy.Address!);
+                        await pharmacyService.GetPharmacyByNameAndAddress(pharmacy.Name!, pharmacy.Address!);
                     if (pharmacyWithSameNameAndAddress is null)
                     {
-                        await _pharmacyService.AddPharmacy(pharmacy);
+                        await pharmacyService.AddPharmacy(pharmacy);
                         createCounter++;
                     }
                     else
                     {
-                        await _pharmacyService.UpdatePharmacy(pharmacy, pharmacyWithSameNameAndAddress.Id);
+                        await pharmacyService.UpdatePharmacy(pharmacy, pharmacyWithSameNameAndAddress.Id);
                         updateCounter++;
                     }
                 }
@@ -60,7 +53,8 @@ public class PharmacyScrapingJob : IJob
                 }
                 else
                 {
-                    _logger.LogError("Couldn't scrape pharamcy page #{currentPage} after multiple attempts.\n{StackTrace}",
+                    logger.LogError(
+                        "Couldn't scrape pharamcy page #{currentPage} after multiple attempts.\n{StackTrace}",
                         currentPage, e.StackTrace);
                 }
             }

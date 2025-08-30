@@ -5,41 +5,32 @@ using Quartz;
 namespace DrugRegistry.API.Jobs;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public class DrugScrapingJob : IJob
+public class DrugScrapingJob(IDrugService drugService, DrugScraper drugScraper, ILogger<DrugScrapingJob> logger)
+    : IJob
 {
     private const int MaxAttempts = 5;
-    private readonly DrugScraper _drugScraper;
-    private readonly IDrugService _drugService;
-    private readonly ILogger<DrugScrapingJob> _logger;
-
-    public DrugScrapingJob(IDrugService drugService, DrugScraper drugScraper, ILogger<DrugScrapingJob> logger)
-    {
-        _drugService = drugService;
-        _drugScraper = drugScraper;
-        _logger = logger;
-    }
 
     public async Task Execute(IJobExecutionContext context)
     {
-        var pageCount = await _drugScraper.GetPageCount();
+        var pageCount = await drugScraper.GetPageCount();
         var retryCount = 0;
         for (var currentPage = 1; currentPage <= pageCount; currentPage++)
             try
             {
                 var createCounter = 0;
                 var updateCounter = 0;
-                var pageResults = await _drugScraper.ScrapePage(currentPage);
+                var pageResults = await drugScraper.ScrapePage(currentPage);
                 foreach (var drug in pageResults.Where(d => d.Url is not null))
                 {
-                    var existingDrug = await _drugService.GetDrugByUrl(drug.Url!);
+                    var existingDrug = await drugService.GetDrugByUrl(drug.Url!);
                     if (existingDrug is null)
                     {
-                        await _drugService.AddDrug(drug);
+                        await drugService.AddDrug(drug);
                         createCounter++;
                     }
                     else
                     {
-                        await _drugService.UpdateDrug(drug, existingDrug.Id);
+                        await drugService.UpdateDrug(drug, existingDrug.Id);
                         updateCounter++;
                     }
                 }
@@ -58,7 +49,7 @@ public class DrugScrapingJob : IJob
                 }
                 else
                 {
-                    _logger.LogError("Couldn't scrape drug page #{currentPage} after multiple attempts.\n{StackTrace}",
+                    logger.LogError("Couldn't scrape drug page #{currentPage} after multiple attempts.\n{StackTrace}",
                         currentPage, e.StackTrace);
                 }
             }

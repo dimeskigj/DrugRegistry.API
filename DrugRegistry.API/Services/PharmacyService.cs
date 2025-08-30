@@ -9,13 +9,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DrugRegistry.API.Services;
 
-public class PharmacyService : BaseDbService, IPharmacyService
+public class PharmacyService(AppDbContext appDbContext) : BaseDbService(appDbContext), IPharmacyService
 {
     private const int MaxItemsPerPage = 20;
-
-    public PharmacyService(AppDbContext appDbContext) : base(appDbContext)
-    {
-    }
 
     public async Task<List<Pharmacy>> GetAllPharmacies()
     {

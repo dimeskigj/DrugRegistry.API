@@ -66,9 +66,9 @@ public class PharmacyEndpoint : IEndpoint
             .WithTags("Pharmacies");
 
         app.MapPost("/api/pharmacies/by-ids", async (
-                    IPharmacyService pharmacyService, 
+                    IPharmacyService pharmacyService,
                     [FromBody] IEnumerable<Guid> ids) =>
-                    Results.Ok(await pharmacyService.GetPharmaciesByIds(ids)))
+                Results.Ok(await pharmacyService.GetPharmaciesByIds(ids)))
             .Produces<IEnumerable<Pharmacy>>()
             .WithName("Find pharmacies by ids")
             .WithTags("Pharmacies");

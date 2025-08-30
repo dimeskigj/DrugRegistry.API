@@ -13,14 +13,12 @@ var dbConnectionString = builder.Configuration.GetConnectionString("Database");
 builder.Services
     .AddEndpointsApiExplorer()
     .AddSwaggerGen()
-    .AddDbContextFactory<AppDbContext>(
-        options => options.UseNpgsql(dbConnectionString)
-    )
+    .AddDbContextFactory<AppDbContext>(options => options.UseNpgsql(dbConnectionString))
     .RegisterServices()
     .AddHttpClient()
     .AddQuartz(q => q.UseMicrosoftDependencyInjectionJobFactory())
     .AddQuartzHostedService(opt => opt.WaitForJobsToComplete = false)
-    .AddScoped<IGeocodingService, GeocodingService>()
+    .AddScoped<IGeocodingService, EmptyGeocodingService>()
     .AddScoped<DrugScraper>()
     .AddScoped<PharmacyScraper>();
 
@@ -41,15 +39,9 @@ using (var serviceScope = app.Services.CreateScope())
 
     var dbContext = services.GetRequiredService<AppDbContext>();
 
-    if (!dbContext.Drugs.Any())
-    {
-        await scheduler.TriggerJob(Jobs.DrugScrapingJobDetail.Key);
-    }
+    if (!dbContext.Drugs.Any()) await scheduler.TriggerJob(Jobs.DrugScrapingJobDetail.Key);
 
-    if (!dbContext.Pharmacies.Any())
-    {
-        await scheduler.TriggerJob(Jobs.PharmacyScrapingJobDetail.Key);
-    }
+    if (!dbContext.Pharmacies.Any()) await scheduler.TriggerJob(Jobs.PharmacyScrapingJobDetail.Key);
 }
 
 
