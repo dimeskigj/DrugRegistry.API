@@ -5,15 +5,9 @@ using HtmlAgilityPack;
 
 namespace DrugRegistry.API.Scraping;
 
-public class DrugScraper : BaseScraper
+public class DrugScraper(IHttpClientFactory httpClientFactory, ILogger<DrugScraper> logger)
+    : BaseScraper(httpClientFactory)
 {
-    private readonly ILogger<DrugScraper> _logger;
-
-    public DrugScraper(IHttpClientFactory httpClientFactory, ILogger<DrugScraper> logger) : base(httpClientFactory)
-    {
-        _logger = logger;
-    }
-
     public Task<int> GetPageCount()
     {
         return base.GetPageCount($"{Constants.LekoviWebUrl}/drugsregister.grid.pager/1/grid_0?t:ac=overview");
@@ -81,7 +75,7 @@ public class DrugScraper : BaseScraper
         try
         {
             var document = LoadHtmlDocument(await Client.RequestHtml(drug.Url!, HttpMethod.Post));
-            
+
             var atc = document.DocumentNode
                 .Descendants()?
                 .Where(el => el.HasClass("row-fluid"))
@@ -90,7 +84,7 @@ public class DrugScraper : BaseScraper
                 .Select(el => el.ExtractDeepText())
                 .LastOrDefault()?
                 .Trim();
-            
+
             var ingredients = document.DocumentNode
                 .Descendants()?
                 .Where(el => el.HasClass("row-fluid"))
@@ -99,7 +93,7 @@ public class DrugScraper : BaseScraper
                 .Select(el => el.ExtractDeepText())
                 .LastOrDefault()?
                 .Trim();
-            
+
             var manualUrl = document.DocumentNode
                 .Descendants()?
                 .Where(el => el.HasClass("row-fluid"))
@@ -109,7 +103,7 @@ public class DrugScraper : BaseScraper
                 .Descendants("a")?
                 .FirstOrDefault()?
                 .GetAttributeValue("href", null);
-            
+
             var reportUrl = document.DocumentNode
                 .Descendants()?
                 .Where(el => el.HasClass("row-fluid"))
@@ -129,7 +123,7 @@ public class DrugScraper : BaseScraper
         }
         catch (Exception e)
         {
-            _logger.LogError("Couldn't Scrape details for {Url}.\n{StackTrace}", drug.Url, e.StackTrace);
+            logger.LogError("Couldn't Scrape details for {Url}.\n{StackTrace}", drug.Url, e.StackTrace);
             throw;
         }
     }

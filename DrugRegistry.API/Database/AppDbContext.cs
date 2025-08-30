@@ -3,12 +3,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DrugRegistry.API.Database;
 
-public class AppDbContext : DbContext
+public class AppDbContext(DbContextOptions<AppDbContext> options) : DbContext(options)
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
-    {
-    }
-
     public DbSet<Drug> Drugs => Set<Drug>();
     public DbSet<Pharmacy> Pharmacies => Set<Pharmacy>();
 }
