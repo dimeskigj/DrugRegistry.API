@@ -1,48 +1,83 @@
 # DrugRegistry.API
 
-This document contains the API specification for DrugRegistry, which is a platform for querying information about drugs and pharmacies.
+This document contains the API specification for **DrugRegistry**, which is a platform for querying information about drugs and pharmacies.
 
 ## Paths
 The following paths are available:
 
-### /api/drugs/search
+### **/api/drugs/search**
 
 This endpoint allows users to search for drugs based on a query string. It accepts the following parameters:
 
-    query: a string representing the search query
-    page (optional): an integer representing the page number of the search results
-    size (optional): an integer representing the number of results to show per page
+- **query**: A string representing the search query.
+- **page** (optional): An integer representing the page number of the search results.
+- **size** (optional): An integer representing the number of results to show per page.
 
-### /api/pharmacies/byLocation
+**Response**: Returns a paged result of drugs.
 
-This endpoint allows users to search for pharmacies based on their location. It accepts the following parameters:
+---
 
-    lon: a double representing the longitude of the user's location
-    lat: a double representing the latitude of the user's location
-    page (optional): an integer representing the page number of the search results
-    size (optional): an integer representing the number of results to show per page
-    municipality (optional): a string representing the municipality of the pharmacy
-    place (optional): a string representing the place of the pharmacy
+### **/api/drugs/by-ids**
 
-### /api/pharmacies/search
+This endpoint allows users to retrieve drugs by their unique identifiers (IDs). It accepts the following parameters:
 
-This endpoint allows users to search for pharmacies based on their name and address. It accepts the following parameters:
+- **ids**: A list of GUIDs representing the IDs of the drugs to retrieve.
 
-    query: a string representing the search query
-    page (optional): an integer representing the page number of the search results
-    size (optional): an integer representing the number of results to show per page
-    municipality (optional): a string representing the municipality of the pharmacy
-    place (optional): a string representing the place of the pharmacy
+**Response**: Returns a list of drugs corresponding to the provided IDs.
 
-### /api/pharmacies/municipalitiesByFrequency
+---
 
-This endpoint allows users to query the municipalities where the most pharmacies are located. It does not accept any parameters.
-### /api/pharmacies/placesByFrequency
+### **/api/pharmacies/by-location**
 
-This endpoint allows users to query the places where the most pharmacies are located. It does not accept any parameters.
+This endpoint allows users to search for pharmacies based on their geographical location. It accepts the following parameters:
+
+- **lon**: A double representing the longitude of the user's location.
+- **lat**: A double representing the latitude of the user's location.
+- **page** (optional): An integer representing the page number of the search results.
+- **size** (optional): An integer representing the number of results to show per page.
+- **municipality** (optional): A string representing the municipality of the pharmacy.
+- **place** (optional): A string representing the place of the pharmacy.
+
+**Response**: Returns a paged result of pharmacies located near the provided coordinates.
+
+---
+
+### **/api/pharmacies/search**
+
+This endpoint allows users to search for pharmacies based on a search query related to their name or address. It accepts the following parameters:
+
+- **query**: A string representing the search query.
+- **page** (optional): An integer representing the page number of the search results.
+- **size** (optional): An integer representing the number of results to show per page.
+- **municipality** (optional): A string representing the municipality of the pharmacy.
+- **place** (optional): A string representing the place of the pharmacy.
+
+**Response**: Returns a paged result of pharmacies matching the search query.
+
+---
+
+### **/api/pharmacies/municipalities-by-frequency**
+
+This endpoint allows users to query the municipalities with the highest number of pharmacies. It does not accept any parameters.
+
+**Response**: Returns a list of municipality names ordered by the frequency of pharmacies.
+
+---
+
+### **/api/pharmacies/places-by-frequency**
+
+This endpoint allows users to query the places within a municipality that have the highest number of pharmacies. It accepts the following parameter:
+
+- **municipality**: A string representing the municipality to query.
+
+**Response**: Returns a list of places within the specified municipality, ordered by the frequency of pharmacies.
+
+---
 
 ## Components
 
 The following components are used in the API:
 
-    DrugPagedResult: a paged result containing a list of drugs or pharmacies and pagination information.
+- **PagedResult**: A paged result containing a list of drugs or pharmacies and pagination information.
+
+---
